@@ -30,7 +30,18 @@ function AppointmentCard({ doctor, specialty, date, details }: { doctor: string;
         <Text style={styles.specialty}>{specialty}</Text>
         <Text style={styles.date}>{date}</Text>
       </View>
-      {details && <TouchableOpacity style={styles.details} onPress={() => {}} accessibilityRole="button"><Text style={styles.detailsText}>See details</Text></TouchableOpacity>}
+      {details && (
+        <TouchableOpacity
+          style={styles.details}
+          onPress={() => { }}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel={`See details for appointment with ${doctor}`}
+          accessibilityHint="Opens the appointment details"
+        >
+          <Text style={styles.detailsText}>See details</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

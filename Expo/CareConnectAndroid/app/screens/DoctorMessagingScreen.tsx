@@ -39,8 +39,10 @@ export default function DoctorMessagingScreen({ navigation }: Props) {
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
+            accessible={true}
             accessibilityRole="button"
             accessibilityLabel="Back to messages"
+            accessibilityHint="Returns to the messages screen"
           >
             <Ionicons
               name="arrow-back"
@@ -79,9 +81,12 @@ export default function DoctorMessagingScreen({ navigation }: Props) {
 
         <View style={styles.composer}>
           <TouchableOpacity
+            style={styles.iconButton}
             onPress={() => { }}
+            accessible={true}
             accessibilityRole="button"
             accessibilityLabel="Attach file"
+            accessibilityHint="Opens options to attach a file to your message"
           >
             <Ionicons
               name="attach"
@@ -96,13 +101,18 @@ export default function DoctorMessagingScreen({ navigation }: Props) {
             onChangeText={setMessage}
             placeholder="Type a message..."
             multiline
-            accessibilityLabel="Type a message"
+            accessible={true}
+            accessibilityLabel="Message"
+            accessibilityHint="Enter the message you want to send"
           />
 
           <TouchableOpacity
+            style={styles.iconButton}
             onPress={send}
+            accessible={true}
             accessibilityRole="button"
             accessibilityLabel="Send message"
+            accessibilityHint="Sends the message to Dr. Sarah Smith"
           >
             <Ionicons
               name="send-outline"
@@ -120,6 +130,13 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: '#FFF',
+  },
+
+  iconButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   header: {
