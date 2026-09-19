@@ -32,7 +32,7 @@ describe('DoctorMessagingScreen', () => {
 
     test('clears a nonblank message after sending', async () => {
         await renderConversation();
-        const input = screen.getByLabelText('Type a message');
+        const input = screen.getByLabelText('Message');
 
         await fireEvent.changeText(input, 'I have a question');
         expect(input).toHaveDisplayValue('I have a question');
@@ -44,7 +44,7 @@ describe('DoctorMessagingScreen', () => {
 
     test('does not clear a whitespace-only message', async () => {
         await renderConversation();
-        const input = screen.getByLabelText('Type a message');
+        const input = screen.getByLabelText('Message');
 
         await fireEvent.changeText(input, '   ');
         await fireEvent.press(screen.getByLabelText('Send message'));

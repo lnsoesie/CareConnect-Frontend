@@ -10,7 +10,14 @@ export default function MessagesScreen({ navigation }: Props) {
     <View style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Messages</Text>
-        <TouchableOpacity style={styles.newButton} onPress={() => navigation.navigate('NewMessage')} accessibilityRole="button">
+        <TouchableOpacity
+          style={styles.newButton}
+          onPress={() => navigation.navigate('NewMessage')}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="New message"
+          accessibilityHint="Opens the screen to compose a new message"
+        >
           <Text style={styles.newText}>+ New message</Text>
         </TouchableOpacity>
         <View style={{ height: 90 }} />
@@ -31,7 +38,16 @@ function MessageCard({ doctor, specialty, preview, time, onDetails }: { doctor: 
       <Text style={styles.preview}>{preview}</Text>
       <View style={styles.cardBottom}>
         <Text style={styles.time}>{time}</Text>
-        <TouchableOpacity style={styles.details} onPress={onDetails} accessibilityRole="button"><Text style={styles.detailsText}>See details</Text></TouchableOpacity>
+        <TouchableOpacity
+          style={styles.details}
+          onPress={onDetails}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel={`See message details from ${doctor}`}
+          accessibilityHint="Opens the conversation with this provider"
+        >
+          <Text style={styles.detailsText}>See details</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

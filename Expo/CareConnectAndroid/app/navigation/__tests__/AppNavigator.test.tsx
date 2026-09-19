@@ -137,11 +137,11 @@ describe('CareConnect navigation', () => {
         expect(screen.getByText('New Message')).toBeVisible();
 
         await fireEvent.changeText(
-            screen.getByLabelText('Select message recipient'),
+            screen.getByLabelText('Message recipient'),
             'Dr. Smith'
         );
         await fireEvent.changeText(
-            screen.getByLabelText('Enter message'),
+            screen.getByLabelText('Message'),
             'Question about my test results'
         );
         await fireEvent.press(

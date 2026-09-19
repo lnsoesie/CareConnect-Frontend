@@ -55,4 +55,24 @@ describe('BottomNav', () => {
 
         expect(navigation.navigate).toHaveBeenCalledWith(destination);
     });
+
+    test('provides accessibility roles and hints for navigation tabs', async () => {
+        const navigation = { navigate: jest.fn() } as any;
+
+        await render(
+            <BottomNav current="Home" navigation={navigation} />
+        );
+
+        const homeTab = screen.getByRole('tab', { name: 'Home' });
+
+        expect(homeTab).toHaveProp(
+            'accessibilityHint',
+            'Opens the Home screen'
+        );
+
+        expect(homeTab).toHaveProp(
+            'accessibilityState',
+            { selected: true }
+        );
+    });
 });

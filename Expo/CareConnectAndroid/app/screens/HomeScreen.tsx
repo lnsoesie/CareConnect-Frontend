@@ -28,9 +28,11 @@ export default function HomeScreen({ navigation }: Props) {
           </Text>
           <TouchableOpacity
             style={styles.smallButton}
-            onPress={() => {}}
+            onPress={() => { }}
+            accessible={true}
             accessibilityRole="button"
             accessibilityLabel="See appointment details"
+            accessibilityHint="Opens details for your upcoming appointment"
           >
             <Text style={styles.smallButtonText}>See details</Text>
           </TouchableOpacity>
@@ -83,8 +85,10 @@ function QuickAccess({
     <TouchableOpacity
       style={styles.tile}
       onPress={onPress}
+      accessible={true}
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityHint={`Opens the ${label} screen`}
     >
       <Ionicons name={icon} size={32} color="#000000" />
       <Text style={styles.tileText}>{label}</Text>
@@ -141,7 +145,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     backgroundColor: '#2C67BA',
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    minHeight: 44,
+    justifyContent: 'center',
     borderTopLeftRadius: 4,
   },
   smallButtonText: {
