@@ -15,9 +15,11 @@ class NewMessageScreen extends StatelessWidget {
         elevation: 0,
         leading: Semantics(
           label: 'Back to messages',
+          hint: 'Double tap to return to messages',
           button: true,
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
             onPressed: () {
               context.go('/messages');
             },
@@ -43,14 +45,11 @@ class NewMessageScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 8),
-              Semantics(
-                label: 'Select message recipient',
-                textField: true,
-                child: const TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Enter provider name',
-                    border: OutlineInputBorder(),
-                  ),
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: 'Message recipient',
+                  hintText: 'Enter provider name',
+                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 24),
@@ -59,21 +58,22 @@ class NewMessageScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 8),
-              Semantics(
-                label: 'Enter message',
-                textField: true,
-                child: const TextField(
-                  maxLines: 6,
-                  decoration: InputDecoration(
-                    hintText: 'Type your message here',
-                    border: OutlineInputBorder(),
-                  ),
+              const TextField(
+                maxLines: 6,
+                decoration: InputDecoration(
+                  labelText: 'Message',
+                  hintText: 'Type the message to send',
+                  border: OutlineInputBorder(),
                 ),
               ),
               Semantics(
                 label: 'Add attachment',
+                hint: 'Double tap to attach a file',
                 button: true,
                 child: TextButton.icon(
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(48, 48),
+                  ),
                   onPressed: () {
                     // Attachment functionality can be connected later.
                   },
@@ -95,6 +95,7 @@ class NewMessageScreen extends StatelessWidget {
                 height: 48,
                 child: Semantics(
                   label: 'Send new message',
+                  hint: 'Double tap to send the message',
                   button: true,
                   child: ElevatedButton(
                     onPressed: () {
@@ -103,6 +104,7 @@ class NewMessageScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: careConnectBlue,
                       foregroundColor: Colors.white,
+                      minimumSize: const Size(48, 48),
                     ),
                     child: const Text(
                       'Send Message',

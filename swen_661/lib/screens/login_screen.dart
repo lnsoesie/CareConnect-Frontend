@@ -25,51 +25,50 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Semantics(
-                  label: 'Email address',
-                  textField: true,
-                  child: TextField(
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'E-mail',
-                      border: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(4),
-                        ),
+                TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Email address',
+                    hintText: 'Enter your email address',
+                    border: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(4),
                       ),
                     ),
                   ),
                 ),
 
                 const SizedBox(height: 20),
-                Semantics(
-                  label: 'Password',
-                  textField: true,
-                  child: TextField(
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(4),
-                        ),
+                TextField(
+                  obscureText: _obscurePassword,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
+                    border: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(4),
                       ),
-                      suffixIcon: Semantics(
-                        label: _obscurePassword
-                            ? 'Show password'
-                            : 'Hide password',
-                        button: true,
-                        child: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                          ),
+                    ),
+                    suffixIcon: Semantics(
+                      label: _obscurePassword
+                          ? 'Show password'
+                          : 'Hide password',
+                      button: true,
+                      hint: 'Double tap to change password visibility',
+                      child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                        constraints: const BoxConstraints(
+                          minWidth: 48,
+                          minHeight: 48,
+                        ),
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
                         ),
                       ),
                     ),
@@ -79,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 Semantics(
                   label: 'Forgot password',
+                  hint: 'Double tap to reset your password',
                   button: true,
                   child: Align(
                     alignment: Alignment.centerRight,
@@ -88,8 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 40),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        minimumSize: const Size(48, 48),
                       ),
                       child: const Text(
                         'Forgot Password',
@@ -107,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 Semantics(
                   label: 'Login',
+                  hint: 'Double tap to sign in',
                   button: true,
                   child: SizedBox(
                     width: double.infinity,
@@ -118,6 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2C67BA),
                         foregroundColor: Colors.white,
+                        minimumSize: const Size(48, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),

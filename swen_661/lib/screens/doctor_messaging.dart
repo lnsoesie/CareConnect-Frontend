@@ -43,11 +43,16 @@ class _DoctorMessagingScreenState extends State<DoctorMessagingScreen> {
                 children: [
                   Semantics(
                     label: 'Back to messages',
+                    hint: 'Double tap to return to messages',
                     button: true,
                     child: IconButton(
                       onPressed: () {
                         context.go('/messages');
                       },
+                      constraints: const BoxConstraints(
+                        minWidth: 48,
+                        minHeight: 48,
+                      ),
                       icon: const Icon(
                         Icons.arrow_back,
                         color: careConnectBlue,
@@ -154,38 +159,45 @@ class _DoctorMessagingScreenState extends State<DoctorMessagingScreen> {
                 children: [
                   Semantics(
                     label: 'Attach file',
+                    hint: 'Double tap to attach a file',
                     button: true,
                     child: IconButton(
                       onPressed: () {
                         // Attachment functionality can be added later.
                       },
+                      constraints: const BoxConstraints(
+                        minWidth: 48,
+                        minHeight: 48,
+                      ),
                       icon: const Icon(Icons.attach_file),
                       iconSize: 24,
                     ),
                   ),
 
                   Expanded(
-                    child: Semantics(
-                      label: 'Type a message',
-                      textField: true,
-                      child: TextField(
-                        controller: _messageController,
-                        minLines: 1,
-                        maxLines: 4,
-                        decoration: const InputDecoration(
-                          hintText: 'Type a message...',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                        ),
+                    child: TextField(
+                      controller: _messageController,
+                      minLines: 1,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        labelText: 'Message',
+                        hintText: 'Enter a message to send',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
                       ),
                     ),
                   ),
 
                   Semantics(
                     label: 'Send message',
+                    hint: 'Double tap to send your message',
                     button: true,
                     child: IconButton(
                       onPressed: _sendMessage,
+                      constraints: const BoxConstraints(
+                        minWidth: 48,
+                        minHeight: 48,
+                      ),
                       icon: const Icon(Icons.send_outlined),
                       iconSize: 25,
                     ),

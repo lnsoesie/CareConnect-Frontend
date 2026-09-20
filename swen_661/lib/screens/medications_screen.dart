@@ -9,6 +9,8 @@ class MedicationsScreen extends ConsumerWidget {
   const MedicationsScreen({super.key});
 
   static const Color careConnectBlue = Color(0xFF2C67BA);
+  static const Color takenStatusBackground = Color(0xFFE5F7F4);
+  static const Color takenStatusText = Color(0xFF26766D);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,24 +38,21 @@ class MedicationsScreen extends ConsumerWidget {
               const SizedBox(height: 80),
 
               // Search field
-              Semantics(
-                label: 'Search medications',
-                textField: true,
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search medications',
-                    prefixIcon: const Icon(Icons.search),
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 16,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Search medications',
+                  hintText: 'Enter a medication name to search',
+                  prefixIcon: const Icon(Icons.search),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 16,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
                   ),
                 ),
               ),
@@ -248,6 +247,7 @@ class MedicationCard extends ConsumerWidget {
 
                 Semantics(
                   label: 'Mark $name as taken',
+                  hint: 'Double tap after taking this medication',
                   button: true,
                   child: SizedBox(
                     height: 48,
@@ -260,6 +260,7 @@ class MedicationCard extends ConsumerWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: MedicationsScreen.careConnectBlue,
                         foregroundColor: Colors.white,
+                        minimumSize: const Size(48, 48),
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),
@@ -360,14 +361,14 @@ class TakenMedicationCard extends StatelessWidget {
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5F7F4),
+                    color: MedicationsScreen.takenStatusBackground,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
                     'Taken',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Color(0xFF4A9B91),
+                      color: MedicationsScreen.takenStatusText,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
