@@ -22,8 +22,10 @@ export default function NewMessageScreen({ navigation }: Props) {
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
+            accessible={true}
             accessibilityRole="button"
             accessibilityLabel="Back to messages"
+            accessibilityHint="Returns to the messages screen"
           >
             <Ionicons
               name="arrow-back"
@@ -40,7 +42,9 @@ export default function NewMessageScreen({ navigation }: Props) {
         <TextInput
           style={styles.input}
           placeholder="Enter provider name"
-          accessibilityLabel="Select message recipient"
+          accessible={true}
+          accessibilityLabel="Message recipient"
+          accessibilityHint="Enter the name of the provider you want to message"
         />
 
         <Text style={styles.label}>Message</Text>
@@ -51,14 +55,18 @@ export default function NewMessageScreen({ navigation }: Props) {
           multiline
           numberOfLines={6}
           textAlignVertical="top"
-          accessibilityLabel="Enter message"
+          accessible={true}
+          accessibilityLabel="Message"
+          accessibilityHint="Enter the message you want to send"
         />
 
         <TouchableOpacity
           style={styles.attach}
           onPress={() => { }}
+          accessible={true}
           accessibilityRole="button"
           accessibilityLabel="Add attachment"
+          accessibilityHint="Opens options to attach a file to your message"
         >
           <Ionicons
             name="attach"
@@ -73,8 +81,10 @@ export default function NewMessageScreen({ navigation }: Props) {
         <TouchableOpacity
           style={styles.send}
           onPress={() => navigation.navigate('Messages')}
+          accessible={true}
           accessibilityRole="button"
           accessibilityLabel="Send message"
+          accessibilityHint="Sends your message and returns to the messages screen"
         >
           <Text style={styles.sendText}>
             Send Message
@@ -140,7 +150,7 @@ const styles = StyleSheet.create({
   attach: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    minHeight: 44,
   },
 
   attachText: {

@@ -75,3 +75,32 @@ test('allows the user to enter an email address', async () => {
         ).toBe('test@example.com');
     });
 });
+
+test('provides accessible roles and hints for login controls', async () => {
+    const navigation = {
+        navigate: jest.fn(),
+        replace: jest.fn(),
+    } as any;
+
+    await render(
+        <LoginScreen navigation={navigation} route={{} as any} />
+    );
+
+    const loginButton = screen.getByRole('button', { name: 'Login' });
+    const forgotButton = screen.getByRole('button', { name: 'Forgot password' });
+
+    expect(loginButton).toHaveProp(
+        'accessibilityHint',
+        'Logs you in and opens the home screen'
+    );
+
+    expect(forgotButton).toHaveProp(
+        'accessibilityHint',
+        'Opens the password reset screen'
+    );
+
+    expect(screen.getByLabelText('Email address')).toHaveProp(
+        'accessibilityHint',
+        'Enter your email address'
+    );
+});

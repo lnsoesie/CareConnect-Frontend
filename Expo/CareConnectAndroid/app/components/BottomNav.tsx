@@ -26,9 +26,11 @@ export default function BottomNav({ current, navigation }: Props) {
             key={item.key}
             style={styles.item}
             onPress={() => navigation.navigate(item.key)}
+            accessible={true}
             accessibilityRole="tab"
             accessibilityState={{ selected }}
             accessibilityLabel={item.label}
+            accessibilityHint={`Opens the ${item.label} screen`}
           >
             <Ionicons name={selected ? item.activeIcon : item.icon} size={28} color={selected ? '#2C67BA' : '#000000'} />
             <Text style={[styles.label, selected && styles.selected]}>{item.label}</Text>
@@ -41,7 +43,12 @@ export default function BottomNav({ current, navigation }: Props) {
 
 const styles = StyleSheet.create({
   bar: { flexDirection: 'row', backgroundColor: '#FFFFFF', borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#D0D0D0', paddingTop: 7, paddingBottom: 8 },
-  item: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  item: {
+    flex: 1,
+    minHeight: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   label: { marginTop: 2, fontSize: 14, color: '#000000' },
   selected: { color: '#2C67BA' },
 });
