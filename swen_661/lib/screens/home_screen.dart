@@ -87,6 +87,7 @@ class HomeScreen extends StatelessWidget {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: careConnectBlue,
                                 foregroundColor: Colors.white,
+                                minimumSize: const Size(48, 48),
                                 shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(4),
@@ -234,9 +235,11 @@ class QuickAccessTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       label: label,
+      hint: 'Double tap to open $label',
       button: true,
       child: InkWell(
         onTap: onTap,
+        canRequestFocus: true,
         child: Container(
           width: 130,
           height: 90,

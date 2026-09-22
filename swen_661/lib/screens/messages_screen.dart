@@ -31,6 +31,7 @@ class MessagesScreen extends StatelessWidget {
               Center(
                 child: Semantics(
                   label: 'Create new message',
+                  hint: 'Double tap to compose a message',
                   button: true,
                   child: SizedBox(
                     height: 48,
@@ -41,6 +42,7 @@ class MessagesScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: careConnectBlue,
                         foregroundColor: Colors.white,
+                        minimumSize: const Size(48, 48),
                         padding: const EdgeInsets.symmetric(horizontal: 28),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
@@ -184,6 +186,7 @@ class MessageCard extends StatelessWidget {
 
                 Semantics(
                   label: 'See message details for $doctorName',
+                  hint: 'Double tap to open this conversation',
                   button: true,
                   child: SizedBox(
                     height: 48,
@@ -194,6 +197,7 @@ class MessageCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: MessagesScreen.careConnectBlue,
                         foregroundColor: Colors.white,
+                        minimumSize: const Size(48, 48),
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),

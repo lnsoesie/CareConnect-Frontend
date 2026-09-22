@@ -171,6 +171,7 @@ class AppointmentCard extends StatelessWidget {
               const SizedBox(width: 12),
               Semantics(
                 label: 'See appointment details',
+                hint: 'Double tap to view appointment details',
                 button: true,
                 child: SizedBox(
                   height: 48,
@@ -181,6 +182,7 @@ class AppointmentCard extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppointmentsScreen.careConnectBlue,
                       foregroundColor: Colors.white,
+                      minimumSize: const Size(48, 48),
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
