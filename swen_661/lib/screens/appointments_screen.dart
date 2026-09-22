@@ -177,7 +177,13 @@ class AppointmentCard extends StatelessWidget {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () {
-                      // We will connect this later.
+                      showDialog(
+                        context: context,
+                        builder: (context) => const AlertDialog(
+                          title: Text('Coming soon'),
+                          content: Text('Appointment details coming soon.'),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppointmentsScreen.careConnectBlue,

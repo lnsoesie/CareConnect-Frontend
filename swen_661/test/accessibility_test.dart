@@ -24,6 +24,68 @@ void main() {
     semanticsHandle.dispose();
   });
 
+  testWidgets('single screen accessibility guideline test', (
+    WidgetTester tester,
+  ) async {
+    final semanticsHandle = tester.ensureSemantics();
+
+    await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+    await tester.pumpAndSettle();
+
+    final emailField = find.bySemanticsLabel('Email address');
+    final passwordField = find.bySemanticsLabel('Password');
+    final visibilityToggle = find.bySemanticsLabel('Show password');
+    final forgotPasswordLink = find.bySemanticsLabel('Forgot password');
+    final loginButton = find.bySemanticsLabel('Login');
+
+    expect(emailField, findsOneWidget);
+    expect(passwordField, findsOneWidget);
+    expect(visibilityToggle, findsOneWidget);
+    expect(forgotPasswordLink, findsWidgets);
+    expect(loginButton, findsWidgets);
+
+    await tester.tap(visibilityToggle);
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel('Hide password'), findsOneWidget);
+
+    semanticsHandle.dispose();
+  });
+
+  testWidgets('login flow meets accessibility guideline function', (
+    WidgetTester tester,
+  ) async {
+    final semanticsHandle = tester.ensureSemantics();
+
+    await tester.pumpWidget(const ProviderScope(child: CareConnectApp()));
+    await tester.pumpAndSettle();
+
+    final emailField = find.bySemanticsLabel('Email address');
+    final passwordField = find.bySemanticsLabel('Password');
+    final loginButton = find.bySemanticsLabel('Login');
+    final forgotPasswordLink = find.bySemanticsLabel('Forgot password');
+
+    expect(emailField, findsOneWidget);
+    expect(passwordField, findsOneWidget);
+    expect(loginButton, findsWidgets);
+    expect(forgotPasswordLink, findsWidgets);
+
+    await tester.tap(emailField);
+    await tester.enterText(emailField, 'user@example.com');
+    await tester.pump();
+
+    await tester.tap(passwordField);
+    await tester.enterText(passwordField, 'Password123!');
+    await tester.pump();
+
+    await tester.tap(loginButton.first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('CareConnect'), findsOneWidget);
+
+    semanticsHandle.dispose();
+  });
+
   testWidgets('text scales at 200 percent', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
     await tester.pumpAndSettle();
@@ -44,26 +106,55 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('interactive controls meet 48x48 touch targets', (
+  testWidgets(
+    'Android tap target guideline: interactive controls meet 48x48 touch targets',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+      await tester.pumpAndSettle();
+
+      final loginButton = find.bySemanticsLabel('Login').first;
+      final forgotPasswordLink = find.bySemanticsLabel('Forgot password').first;
+      final visibilityToggle = find.bySemanticsLabel('Show password').first;
+
+      final loginSize = tester.getSize(loginButton);
+      final forgotPasswordSize = tester.getSize(forgotPasswordLink);
+      final visibilitySize = tester.getSize(visibilityToggle);
+
+      expect(loginSize.width, greaterThanOrEqualTo(48));
+      expect(loginSize.height, greaterThanOrEqualTo(48));
+      expect(forgotPasswordSize.width, greaterThanOrEqualTo(48));
+      expect(forgotPasswordSize.height, greaterThanOrEqualTo(48));
+      expect(visibilitySize.width, greaterThanOrEqualTo(48));
+      expect(visibilitySize.height, greaterThanOrEqualTo(48));
+    },
+  );
+
+  testWidgets('settings and detail buttons provide feedback', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+    final semanticsHandle = tester.ensureSemantics();
+
+    await tester.pumpWidget(const MaterialApp(home: ProfileScreen()));
     await tester.pumpAndSettle();
 
-    final loginSize = tester.getSize(
-      find.widgetWithText(ElevatedButton, 'Login'),
+    final accountSettings = tester.widget<ProfileSettingsButton>(
+      find.byType(ProfileSettingsButton).first,
     );
-    final forgotPasswordSize = tester.getSize(
-      find.widgetWithText(TextButton, 'Forgot Password'),
-    );
-    final visibilitySize = tester.getSize(find.byType(IconButton));
+    accountSettings.onTap();
+    await tester.pumpAndSettle();
+    expect(find.text('Account settings coming soon.'), findsOneWidget);
 
-    expect(loginSize.width, greaterThanOrEqualTo(48));
-    expect(loginSize.height, greaterThanOrEqualTo(48));
-    expect(forgotPasswordSize.width, greaterThanOrEqualTo(48));
-    expect(forgotPasswordSize.height, greaterThanOrEqualTo(48));
-    expect(visibilitySize.width, greaterThanOrEqualTo(48));
-    expect(visibilitySize.height, greaterThanOrEqualTo(48));
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await tester.pumpAndSettle();
+
+    final detailsButton = tester.widget<ElevatedButton>(
+      find.widgetWithText(ElevatedButton, 'See details'),
+    );
+    detailsButton.onPressed?.call();
+    await tester.pumpAndSettle();
+    expect(find.text('Appointment details coming soon.'), findsOneWidget);
+
+    semanticsHandle.dispose();
   });
 
   test('text colors meet WCAG contrast thresholds', () {

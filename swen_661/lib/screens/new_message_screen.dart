@@ -75,7 +75,13 @@ class NewMessageScreen extends StatelessWidget {
                     minimumSize: const Size(48, 48),
                   ),
                   onPressed: () {
-                    // Attachment functionality can be connected later.
+                    showDialog(
+                      context: context,
+                      builder: (context) => const AlertDialog(
+                        title: Text('Coming soon'),
+                        content: Text('Attachment feature coming soon.'),
+                      ),
+                    );
                   },
                   icon: const Icon(Icons.attach_file, color: careConnectBlue),
                   label: const Text(

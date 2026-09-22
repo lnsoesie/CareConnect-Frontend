@@ -72,27 +72,62 @@ class ProfileScreen extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              ProfileSettingsButton(label: 'Account Settings', onTap: () {}),
+              ProfileSettingsButton(
+                label: 'Account Settings',
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const AlertDialog(
+                      title: Text('Coming soon'),
+                      content: Text('Account settings coming soon.'),
+                    ),
+                  );
+                },
+              ),
 
               const SizedBox(height: 6),
 
               ProfileSettingsButton(
                 label: 'Accessibility Settings',
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const AlertDialog(
+                      title: Text('Coming soon'),
+                      content: Text('Accessibility settings coming soon.'),
+                    ),
+                  );
+                },
               ),
 
               const SizedBox(height: 10),
 
               ProfileSettingsButton(
                 label: 'Notification Settings',
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const AlertDialog(
+                      title: Text('Coming soon'),
+                      content: Text('Notification settings coming soon.'),
+                    ),
+                  );
+                },
               ),
 
               const SizedBox(height: 10),
 
               ProfileSettingsButton(
                 label: 'Privacy and Security',
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const AlertDialog(
+                      title: Text('Coming soon'),
+                      content: Text('Privacy and security coming soon.'),
+                    ),
+                  );
+                },
               ),
 
               const SizedBox(height: 10),

@@ -163,7 +163,13 @@ class _DoctorMessagingScreenState extends State<DoctorMessagingScreen> {
                     button: true,
                     child: IconButton(
                       onPressed: () {
-                        // Attachment functionality can be added later.
+                        showDialog(
+                          context: context,
+                          builder: (context) => const AlertDialog(
+                            title: Text('Coming soon'),
+                            content: Text('Attachment feature coming soon.'),
+                          ),
+                        );
                       },
                       constraints: const BoxConstraints(
                         minWidth: 48,
