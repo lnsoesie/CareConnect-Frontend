@@ -32,9 +32,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: MediaQuery(
-          data: const MediaQueryData(
-            textScaler: TextScaler.linear(2.0),
-          ),
+          data: const MediaQueryData(textScaler: TextScaler.linear(2.0)),
           child: const LoginScreen(),
         ),
       ),
@@ -84,7 +82,24 @@ void main() {
       ),
       greaterThanOrEqualTo(4.5),
     );
-    expect(_contrast(Colors.grey.shade600, Colors.white), greaterThanOrEqualTo(4.5));
+    expect(
+      _contrast(Colors.grey.shade600, Colors.white),
+      greaterThanOrEqualTo(4.5),
+    );
+  });
+
+  testWidgets('Flutter accessibility guidelines are met', (
+    WidgetTester tester,
+  ) async {
+    final semanticsHandle = tester.ensureSemantics();
+
+    await tester.pumpWidget(const ProviderScope(child: CareConnectApp()));
+    await tester.pumpAndSettle();
+
+    expect(tester, meetsGuideline(androidTapTargetGuideline));
+    expect(tester, meetsGuideline(textContrastGuideline));
+
+    semanticsHandle.dispose();
   });
 }
 
