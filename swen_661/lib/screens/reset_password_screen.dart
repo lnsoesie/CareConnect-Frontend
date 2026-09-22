@@ -13,10 +13,12 @@ class ResetPasswordScreen extends StatelessWidget {
         elevation: 0,
         foregroundColor: Colors.black,
         leading: Semantics(
-          label: 'Back',
+              label: 'Back to login',
+              hint: 'Double tap to return to login',
           button: true,
           child: IconButton(
             icon: const Icon(Icons.arrow_back),
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
             onPressed: () {
               context.go('/login');
             },
@@ -54,15 +56,12 @@ class ResetPasswordScreen extends StatelessWidget {
               const SizedBox(height: 48),
 
               // Email field
-              Semantics(
-                label: 'Email address',
-                textField: true,
-                child: TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'E-mail',
-                    border: OutlineInputBorder(),
-                  ),
+              TextField(
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Email address',
+                  hintText: 'Enter your email address',
+                  border: OutlineInputBorder(),
                 ),
               ),
 
@@ -71,23 +70,22 @@ class ResetPasswordScreen extends StatelessWidget {
               // Send Reset Link button
               Semantics(
                 label: 'Send reset link',
+                hint: 'Double tap to send the password reset link',
                 button: true,
                 child: SizedBox(
-                  width: 230,
-                  height: 48,
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2C67BA),
                       foregroundColor: Colors.white,
+                      minimumSize: const Size(48, 48),
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
                     ),
                     child: const Text(
                       'Send Reset Link',
-                      maxLines: 1,
-                      softWrap: false,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,

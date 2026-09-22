@@ -6,7 +6,7 @@ class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   static const Color careConnectBlue = Color(0xFF2C67BA);
-  static const Color logoutGreen = Color(0xFF0D9B8A);
+  static const Color logoutGreen = Color(0xFF087568);
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +99,7 @@ class ProfileScreen extends StatelessWidget {
 
               Semantics(
                 label: 'Log out',
+                hint: 'Double tap to return to the login screen',
                 button: true,
                 child: SizedBox(
                   width: double.infinity,
@@ -110,6 +111,7 @@ class ProfileScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: logoutGreen,
                       foregroundColor: Colors.white,
+                      minimumSize: const Size(48, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
@@ -216,6 +218,7 @@ class ProfileSettingsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       label: label,
+      hint: 'Double tap to open $label',
       button: true,
       child: SizedBox(
         width: double.infinity,
@@ -224,6 +227,7 @@ class ProfileSettingsButton extends StatelessWidget {
           onPressed: onTap,
           style: OutlinedButton.styleFrom(
             foregroundColor: Colors.black,
+            minimumSize: const Size(48, 48),
             side: const BorderSide(color: Colors.black26),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),

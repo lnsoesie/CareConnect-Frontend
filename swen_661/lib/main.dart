@@ -16,6 +16,12 @@ class CareConnectApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'CareConnect',
       routerConfig: appRouter,
+      builder: (context, child) {
+        return FocusTraversalGroup(
+          policy: ReadingOrderTraversalPolicy(),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

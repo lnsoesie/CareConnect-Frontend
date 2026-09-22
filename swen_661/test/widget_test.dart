@@ -1,5 +1,6 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:swen_661/main.dart';
 import 'package:swen_661/app_router.dart';
 
@@ -95,4 +96,24 @@ void main() {
     expect(find.text('Enter provider name'), findsOneWidget);
     expect(find.text('Send Message'), findsOneWidget);
   });
+
+  testWidgets('Doctor messaging sends a valid message and clears input', (
+    WidgetTester tester,
+  ) async {
+    appRouter.go('/doctor-messaging');
+
+    await tester.pumpWidget(const ProviderScope(child: CareConnectApp()));
+    await tester.pumpAndSettle();
+
+    final messageField = find.byType(TextField);
+    expect(messageField, findsOneWidget);
+
+    await tester.enterText(messageField, 'Hello Dr. Smith');
+    await tester.tap(find.bySemanticsLabel('Send message'));
+    await tester.pump();
+
+    final field = tester.widget<TextField>(messageField);
+    expect(field.controller?.text, isEmpty);
+  });
 }
+
