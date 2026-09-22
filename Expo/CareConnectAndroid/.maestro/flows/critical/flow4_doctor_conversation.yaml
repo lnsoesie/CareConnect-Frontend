@@ -1,0 +1,35 @@
+appId: com.careconnectandroid
+name: "Critical Flow 4 — Open doctor conversation and send reply"
+---
+# Verifies the doctor messaging flow:
+#   Messages list → conversation → read prior messages → type reply → Send clears input → back.
+
+- launchApp:
+    clearState: true
+- tapOn: "Login"
+- assertVisible: "Welcome back!"
+
+# --- Navigate to Messages ---
+- tapOn: "Messages"
+- assertVisible: "Messages"
+- assertVisible: "Your test results are ready"
+
+# --- Open conversation ---
+- tapOn: "See message details from Dr. Barrow"
+- assertVisible: "Dr. Sarah Smith"
+- assertVisible: "Your test results are ready, please let me know if you have any questions."
+
+# --- Type reply ---
+- tapOn: "Message"
+- inputText: "Thank you, I will review the results and call if I have questions."
+
+# --- Send clears input ---
+- tapOn: "Send message"
+- assertNotVisible: "Thank you, I will review the results and call if I have questions."
+
+# --- Attach file button reachable ---
+- tapOn: "Attach file"
+
+# --- Back to Messages list ---
+- tapOn: "Back to messages"
+- assertVisible: "Messages"

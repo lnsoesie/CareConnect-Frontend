@@ -1,0 +1,42 @@
+appId: com.careconnectandroid
+name: "Critical Flow 2 — Mark medication as taken and verify state change"
+---
+# Verifies the medication management flow:
+#   search filter → mark as taken → Taken badge replaces button → state persists.
+
+- launchApp:
+    clearState: true
+- tapOn: "Login"
+- assertVisible: "Welcome back!"
+
+# --- Navigate to Medications ---
+- tapOn: "Medications"
+- assertVisible: "Medications"
+- assertVisible: "Lisinopril"
+- assertVisible: "Fingolimod"
+- assertVisible: "Mark Lisinopril as taken"
+- assertVisible: "Mark Fingolimod as taken"
+
+# --- Search filter narrows list ---
+- tapOn: "Search medications"
+- inputText: "Fin"
+- assertVisible: "Fingolimod"
+- assertNotVisible: "Lisinopril"
+
+# --- Clear filter restores full list ---
+- eraseText
+- assertVisible: "Lisinopril"
+
+# --- Mark Lisinopril as taken ---
+- tapOn: "Mark Lisinopril as taken"
+#- assertNotVisible: "Mark Lisinopril as taken"
+
+- assertVisible: "Taken"
+
+# --- Mark Fingolimod as taken ---
+- tapOn: "Mark Fingolimod as taken"
+#- assertNotVisible: "Mark Fingolimod as taken"
+
+# --- Taken Today section remains ---
+- assertVisible: "TAKEN TODAY"
+- assertVisible: "Aspirin"

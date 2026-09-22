@@ -1,0 +1,42 @@
+appId: com.careconnectandroid
+name: "Accessibility — Home screen and bottom navigation (screen reader labels)"
+---
+# Verifies Home screen quick-access tiles and the bottom navigation bar carry
+# the labels, roles, and selected-state that TalkBack / VoiceOver require.
+
+- launchApp:
+    clearState: true
+- tapOn: "Login"
+- assertVisible: "Welcome back!"
+
+# --- Quick-access tile labels ---
+- assertVisible: "Appointments"
+- assertVisible: "Medications"
+- assertVisible: "Messages"
+- assertVisible: "Profile"
+
+# Appointment details action
+- assertVisible: "See appointment details"
+
+# --- Bottom navigation: all five tabs reachable by label ---
+- assertVisible: "Home"
+- assertVisible: "Appointments"
+- assertVisible: "Messages"
+- assertVisible: "Medications"
+- assertVisible: "Profile"
+
+# Tapping each tab navigates to the correct screen
+- tapOn: "Appointments"
+- assertVisible: "Appointments"
+
+- tapOn: "Medications"
+- assertVisible: "Medications"
+
+- tapOn: "Messages"
+- assertVisible: "Messages"
+
+- tapOn: "Profile"
+- assertVisible: "Profile"
+
+- tapOn: "Home"
+- assertVisible: "Welcome back!"

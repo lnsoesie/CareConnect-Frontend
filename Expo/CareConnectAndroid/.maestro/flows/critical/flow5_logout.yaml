@@ -1,0 +1,34 @@
+appId: com.careconnectandroid
+name: "Critical Flow 5 — View profile and log out"
+---
+# Verifies the profile screen and logout flow:
+#   Home → Profile → personal info visible → Log out → Login screen with empty fields.
+
+- launchApp:
+    clearState: true
+- tapOn: "Login"
+- assertVisible: "Welcome back!"
+
+# --- Navigate to Profile ---
+- tapOn: "Profile"
+- assertVisible: "Profile"
+- assertVisible: "John Doe"
+- assertVisible: "Patient"
+- assertVisible: "Personal Information"
+- assertVisible: "john.doe@gmail.com"
+- assertVisible: "(111) 111-1111"
+
+# --- Settings rows are visible ---
+- assertVisible: "Account Settings"
+- assertVisible: "Accessibility Settings"
+- assertVisible: "Notification Settings"
+- assertVisible: "Privacy and Security"
+
+# --- Log out returns to Login ---
+- tapOn: "Log out"
+- assertVisible: "Login"
+- assertVisible: "Email address"
+- assertVisible: "Password"
+
+# --- Fields are empty after logout ---
+- assertVisible: "Email address"

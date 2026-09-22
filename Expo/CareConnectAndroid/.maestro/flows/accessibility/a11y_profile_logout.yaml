@@ -1,0 +1,27 @@
+appId: com.careconnectandroid
+name: "Accessibility — Profile screen and logout (screen reader labels)"
+---
+# Verifies every interactive control on the Profile screen carries a label
+# and that the logout action returns the user to Login with focusable fields.
+
+- launchApp:
+    clearState: true
+- tapOn: "Login"
+- assertVisible: "Welcome back!"
+- tapOn: "Profile"
+- assertVisible: "Profile"
+
+# Settings buttons discoverable by label
+- assertVisible: "Account Settings"
+- assertVisible: "Accessibility Settings"
+- assertVisible: "Notification Settings"
+- assertVisible: "Privacy and Security"
+
+# Log out button discoverable by label
+- assertVisible: "Log out"
+
+# Log out lands on Login with accessible fields
+- tapOn: "Log out"
+- assertVisible: "Email address"
+- assertVisible: "Password"
+- assertVisible: "Login"

@@ -1,0 +1,31 @@
+appId: com.careconnectandroid
+name: "Critical Flow 1 — Login and reach Home dashboard"
+---
+# Verifies that a new user can authenticate and land on the Home dashboard
+# with all key sections visible.
+
+- launchApp
+
+# --- Login screen ---
+- assertVisible: "E-mail"
+- assertVisible: "Password"
+
+#- tapOn: "E-mail"
+#- inputText: "user@care.com"
+#- tapOn: "Password"
+#- inputText: "password"
+
+- tapOn: "Login"
+
+# --- Home dashboard ---
+- assertVisible: "CareConnect"
+- assertVisible: "Welcome back!"
+- assertVisible: "Upcoming Appointment"
+- assertVisible: "Quick access"
+
+# Bottom navigation tabs present
+- assertVisible: "Home"
+- assertVisible: "Appointments"
+- assertVisible: "Messages"
+- assertVisible: "Medications"
+- assertVisible: "Profile"
