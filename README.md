@@ -5,6 +5,7 @@ This is the repository for the CareConnect User Interface implementation for use
 - Vindhya Sood - GitHub: pristine-cpu
 - Ian Ard - GitHub: ianscottard
 - Lucrece Nsoesie - GitHub: lnsoesie
+- Ashvini Tandale - GitHub: CybernetCatgirl
 
 ## Team Charter
 The team charter can be found at the following link: https://umuc365-my.sharepoint.com/:w:/g/personal/vsood_student_umgc_edu/IQAzqldJc9OIT4xptp6mU8mPATRAUvpZWsxfeGpoIplOEbI?e=1UQcwP
@@ -185,6 +186,37 @@ https://github.com/ianscottard/CareConnect-Frontend-Team-8/blob/main/swen_661/co
 
 Current test coverage: **65.5%**
 
+## Flutter Accessibility Testing
+
+The Flutter application includes accessibility support and automated accessibility testing for WCAG-related requirements.
+
+Accessibility features and tests include:
+
+- Meaningful semantic labels for interactive elements
+- Screen-reader semantics using Flutter `Semantics` widgets
+- Minimum 48 x 48 logical pixel touch targets
+- 200% text scaling testing
+- Keyboard and focus-order support
+- WCAG color contrast testing
+- Flutter built-in `androidTapTargetGuideline` testing
+- Flutter built-in `textContrastGuideline` testing
+
+The complete Flutter test suite currently contains **15 passing tests**.
+
+Run the Flutter accessibility-specific tests with:
+
+```bash
+flutter test test/accessibility_test.dart
+```
+
+Run the complete Flutter test suite with:
+
+```bash
+flutter test
+```
+
+Android TalkBack testing was performed as part of the Flutter accessibility work. The required Flutter screen-reader demonstration video is submitted separately with the assignment materials.
+
 ## Known Issues or Limitations
 
 ### Known Issues
@@ -204,6 +236,101 @@ Currently, the CareConnect application is entirely a frontend application, with 
 Messaging functionality currently only consists of a visual prototype. Due to the lack of a backend, no actual messages may be exchanged at this time; as such, the page largely serves as a prototype proof-of-concept design.
 
 At the time of writing, the bottom navigation bar is copy-pasted across multiple pages. By converting it to a singular widget, the navigation bar will be more modular and quicker and easier to test.
+
+# React Native Documentation
+
+## Project Description
+
+The React Native version of CareConnect is a healthcare mobile application built with React Native, Expo, and TypeScript. It includes screens for managing appointments, medications, messages, and patient profile information.
+
+The React Native project is located at:
+
+```text
+Expo/CareConnectAndroid
+```
+
+## How to Run the React Native App
+
+From the root of the repository, navigate to the React Native project:
+
+```bash
+cd Expo/CareConnectAndroid
+```
+
+Install the required dependencies:
+
+```bash
+npm install
+```
+
+Start the Expo development server:
+
+```bash
+npx expo start
+```
+
+Follow the Expo terminal instructions to open the application using an available device, simulator, emulator, or Expo Go.
+
+For iOS:
+
+```bash
+npx expo start --ios
+```
+
+For Android:
+
+```bash
+npx expo start --android
+```
+
+## React Native Testing
+
+The React Native application uses Jest and React Native Testing Library for automated testing.
+
+Run the complete test suite with:
+
+```bash
+npm test
+```
+
+Run the tests and generate a coverage report with:
+
+```bash
+npm test -- --coverage
+```
+
+The most recent React Native test run completed successfully with **29 passing tests**.
+
+### React Native Test Coverage
+
+The most recent coverage results were:
+
+- Statements: **93.82%**
+- Branches: **79.16%**
+- Functions: **83.92%**
+- Lines: **94.87%**
+
+These results exceed the assignment requirement of 60% test coverage.
+
+## React Native Accessibility
+
+Accessibility features implemented in the React Native application include:
+
+- Meaningful screen-reader labels and roles
+- Accessibility hints for interactive controls
+- `accessible`, `accessibilityLabel`, `accessibilityRole`, and `accessibilityHint` properties
+- Minimum 44 x 44 point touch targets
+- Improved text and interface color contrast
+- Dynamic text scaling support
+- Accessible bottom navigation
+- Screen-reader announcements for medication status changes
+
+Manual accessibility testing was performed across iOS and Android as part of the team testing process. VoiceOver testing was performed on an iPhone, and Android testing was completed by other team members. Automated React Native accessibility tests are also included in the Jest test suite.
+
+A React Native iOS VoiceOver demonstration was recorded as part of the Week 6 accessibility testing evidence.
+
+
+
 
 ## Team Member Contributions This Week
 
