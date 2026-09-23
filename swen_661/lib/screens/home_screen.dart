@@ -83,7 +83,17 @@ class HomeScreen extends StatelessWidget {
                             label: 'See appointment details',
                             button: true,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const AlertDialog(
+                                    title: Text('Coming soon'),
+                                    content: Text(
+                                      'Appointment details coming soon.',
+                                    ),
+                                  ),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: careConnectBlue,
                                 foregroundColor: Colors.white,

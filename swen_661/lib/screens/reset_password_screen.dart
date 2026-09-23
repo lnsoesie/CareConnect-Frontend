@@ -75,7 +75,17 @@ class ResetPasswordScreen extends StatelessWidget {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => const AlertDialog(
+                          title: Text('Coming soon'),
+                          content: Text(
+                            'Password reset link request coming soon.',
+                          ),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2C67BA),
                       foregroundColor: Colors.white,
