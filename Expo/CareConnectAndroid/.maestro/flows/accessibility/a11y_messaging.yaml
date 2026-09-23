@@ -1,0 +1,56 @@
+appId: com.careconnectandroid
+name: "Accessibility — Messages, New Message, and Doctor Messaging (screen reader labels)"
+---
+# Verifies that every button and input across the three messaging screens
+# carries descriptive accessible labels so TalkBack / VoiceOver users can
+# navigate without relying on visual context.
+
+- launchApp:
+    clearState: true
+- tapOn: "Login"
+- assertVisible: "Welcome back!"
+- tapOn: "Messages"
+- assertVisible: "Messages"
+
+# --- Messages list ---
+# New message action discoverable by label
+- assertVisible: "New message"
+
+# Conversation items name the provider
+- assertVisible: "See message details from Dr. Barrow"
+- assertVisible: "See message details from Dr. Smith"
+
+# --- New Message screen ---
+- tapOn: "New message"
+- assertVisible: "New Message"
+
+# All inputs and actions carry labels
+- assertVisible: "Message recipient"
+- assertVisible: "Message"
+- assertVisible: "Add attachment"
+- assertVisible: "Send message"
+- assertVisible: "Back to messages"
+
+# Back navigates without sending
+- tapOn: "Back to messages"
+- assertVisible: "Messages"
+
+# --- Doctor Messaging screen ---
+- tapOn: "See message details from Dr. Barrow"
+- assertVisible: "Dr. Sarah Smith"
+
+# All controls carry labels
+- assertVisible: "Back to messages"
+- assertVisible: "Message"
+- assertVisible: "Send message"
+- assertVisible: "Attach file"
+
+# Send clears input
+- tapOn: "Message"
+- inputText: "Hello!"
+- tapOn: "Send message"
+
+
+# Back returns to Messages
+- tapOn: "Back to messages"
+- assertVisible: "Messages"

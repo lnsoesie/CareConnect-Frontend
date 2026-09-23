@@ -1,0 +1,38 @@
+appId: com.careconnectandroid
+name: "Accessibility — Medications screen (screen reader labels and live region)"
+---
+# Verifies medication cards, buttons, and the Taken badge all carry the
+# labels TalkBack / VoiceOver need; the Taken badge live region means the
+# state change is announced without requiring a focus shift.
+
+- launchApp:
+    clearState: true
+- tapOn: "Login"
+- assertVisible: "Welcome back!"
+- tapOn: "Medications"
+- assertVisible: "Medications"
+
+# Search field discoverable by label
+- assertVisible: "Search medications"
+
+# Mark as taken buttons name the specific medication
+- assertVisible: "Mark Lisinopril as taken"
+- assertVisible: "Mark Fingolimod as taken"
+
+# Mark Lisinopril — Taken badge appears (live region announces change)
+- tapOn: "Mark Lisinopril as taken"
+- assertNotVisible: "Mark Lisinopril as taken"
+- assertVisible: "Lisinopril taken"
+
+# Mark Fingolimod
+- tapOn: "Mark Fingolimod as taken"
+- assertNotVisible: "Mark Fingolimod as taken"
+- assertVisible: "Fingolimod taken"
+
+# Pre-taken medication visible
+- assertVisible: "Aspirin taken"
+
+# Search narrows list (input discoverable by label)
+- tapOn: "Search medications"
+- inputText: "Asp"
+- assertVisible: "Aspirin"

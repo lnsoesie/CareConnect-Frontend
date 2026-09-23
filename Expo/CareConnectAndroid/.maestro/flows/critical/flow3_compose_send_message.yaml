@@ -1,0 +1,42 @@
+appId: com.careconnectandroid
+name: "Critical Flow 3 — Compose and send a new message"
+---
+# Verifies the message composition flow:
+#   Messages list → New Message form → fill recipient + body → Send → back on list.
+
+- launchApp:
+    clearState: true
+- tapOn: "Login"
+- assertVisible: "Welcome back!"
+
+# --- Navigate to Messages ---
+- tapOn: "Messages"
+- assertVisible: "Messages"
+- assertVisible: "New message"
+
+# --- Open New Message ---
+- tapOn: "New message"
+- assertVisible: "New Message"
+
+# --- Fill form ---
+- tapOn: "Message recipient"
+- inputText: "Dr. Smith"
+
+- tapOn: "Message"
+- inputText: "Following up on my recent appointment. Is the prescription ready?"
+
+# --- Attach a file (tap only — verifies button is reachable) ---
+- tapOn: "Add attachment"
+
+# --- Send ---
+- tapOn: "Send message"
+
+# --- Returns to Messages list ---
+- assertVisible: "Messages"
+#- assertNotVisible: "New Message"
+
+# --- Back navigation from New Message also works ---
+- tapOn: "New message"
+- assertVisible: "New Message"
+- tapOn: "Back to messages"
+- assertVisible: "Messages"

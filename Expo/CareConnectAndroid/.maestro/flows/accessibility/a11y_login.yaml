@@ -1,0 +1,34 @@
+appId: com.careconnectandroid
+name: "Accessibility — Login screen (screen reader labels)"
+---
+# Verifies that every interactive element on the Login screen carries the
+# accessible label a screen reader (TalkBack / VoiceOver) announces.
+# Maestro targets elements by their accessibilityLabel so a missing label
+# causes the assertion to fail — the same failure a screen reader user experiences.
+
+- launchApp:
+    clearState: true
+
+# Fields discoverable by label
+- assertVisible: "Email address"
+- assertVisible: "Password"
+
+# Show/Hide password toggle
+- assertVisible: "Show password"
+- tapOn: "Show password"
+- assertVisible: "Hide password"
+- tapOn: "Hide password"
+- assertVisible: "Show password"
+
+# Action buttons discoverable by label
+- assertVisible: "Forgot password"
+- assertVisible: "Login"
+
+# Forgot password opens Reset Password screen
+- tapOn: "Forgot password"
+- assertVisible: "E-mail"
+- assertVisible: "Send reset link"
+
+# Back returns to Login
+- tapOn: "Back"
+- assertVisible: "Login"
