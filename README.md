@@ -5,7 +5,7 @@ This is the repository for the CareConnect User Interface implementation for use
 - Vindhya Sood - GitHub: pristine-cpu
 - Ian Ard - GitHub: ianscottard
 - Lucrece Nsoesie - GitHub: lnsoesie
-- Ashvini Tandale - GitHub: CybernetCatgirl
+- Ashvini Tandale - GitHub: ashvini10
 
 ## Team Charter
 The team charter can be found at the following link: https://umuc365-my.sharepoint.com/:w:/g/personal/vsood_student_umgc_edu/IQAzqldJc9OIT4xptp6mU8mPATRAUvpZWsxfeGpoIplOEbI?e=1UQcwP
