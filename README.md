@@ -51,7 +51,7 @@ Once you have cloned this repo, you can set up each user interface with the inst
 
 # Flutter Documentation
 
-**Team 8:** Ian Ard, Lucrece Nsoesie, Vindhya Sood
+**Team 8:** Ian Ard, Lucrece Nsoesie, Vindhya Sood, Ashvini Tandale
 
 ## Project Description
 
@@ -329,8 +329,10 @@ Manual accessibility testing was performed across iOS and Android as part of the
 
 A React Native iOS VoiceOver demonstration was recorded as part of the Week 6 accessibility testing evidence.
 
-
-
+## React Native E2E testing using Maestro
+Tested 5 critical flows and 5 accessibility flows for the reach native application using maestro. 
+Maestro Test cases are stored under .maestro folder.
+Test cases were created & executed using Maestro Studio.
 
 ## Team Member Contributions This Week
 
@@ -339,6 +341,7 @@ A React Native iOS VoiceOver demonstration was recorded as part of the Week 6 ac
 | **Vindhya** | Refined the CareConnect Screens which include login, reset password, reset password, dashboard/home screen, appointment, messages, medications, profile, new message and doctor message. <br><br> Updated README *"How to run the app"* and *"known issues and limitations".* <br><br> 15 minutes of video recording. |
 | **Ian** | Additional work on documentation, to further analyze limitations and potential issues. <br><br> Analysis of codebase and test suite results to note additional limitations and areas of improvement. |
 | **Lucrece** | Completed preliminary CareConnect codes in iOS for screens which include login, reset password, home screen, messages, doctor messaging, new message and doctor message. <br><br> Included some initial tests and coverage results obtained into a pull request to GitHub. |
+| **Ashvini** | Completed e2e and integration tests for react native application using Maestro and Maestro studio |
 
 ## Using AI for This Assignment
 
