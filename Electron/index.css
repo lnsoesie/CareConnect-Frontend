@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+/* Map Figma composite font-family references to real fonts */
+.font-\[\'Arimo\:Regular\'\] { font-family: 'Arimo', sans-serif; font-weight: 400; }
+.font-\[\'Arimo\:Bold\'\] { font-family: 'Arimo', sans-serif; font-weight: 700; }
+.font-\[\'Inter\:Regular\'\] { font-family: 'Inter', sans-serif; font-weight: 400; }
+.font-\[\'Inter\:Medium\'\] { font-family: 'Inter', sans-serif; font-weight: 500; }
+.font-\[\'Inter\:Semi_Bold\'\] { font-family: 'Inter', sans-serif; font-weight: 600; }
+.font-\[\'Inter\:Bold\'\] { font-family: 'Inter', sans-serif; font-weight: 700; }
