@@ -39,9 +39,11 @@ Once you have cloned this repo, you can set up each user interface with the inst
 - Scan the provided QR code with your Expo Go device to run the application
 
 ### Electron Desktop UI
-- Navigate to {{ROOT}}\Electron in your command line interface
+- Navigate to `{{ROOT}}\Electron` in your command line interface
 - Download dependencies with `npm install`
-- Run Electron with `npm start` to open a new desktop window with the Electron UI
+- Run `npm run desktop:dev` to launch the Electron app in development mode
+- For a production-style local run, use `npm run desktop:build` followed by `npm run desktop:start`
+- On Windows, create an installer with `npm run desktop:installer`
 
 ### Vite Web UI
 - Navigate to {{ROOT}}\Vite\vite in your command line interface
