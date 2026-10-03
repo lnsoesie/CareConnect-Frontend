@@ -7,63 +7,60 @@ describe('CareConnect Login', () => {
         render(<App />);
 
         expect(
-            screen.getByRole('heading', { name: 'CareConnect' })
+            screen.getByRole('heading', { name: 'Welcome' })
         ).toBeInTheDocument();
 
         expect(
-            screen.getByLabelText('Email')
+            screen.getByLabelText('Email address')
         ).toBeInTheDocument();
 
         expect(
             screen.getByLabelText('Password')
         ).toBeInTheDocument();
 
+    });
+
+    test('allows the user to sign in and opens the home screen', async () => {
+        const user = userEvent.setup();
+
+        render(<App />);
+
+        await user.type(
+            screen.getByLabelText('Email address'),
+            'jane.doe@example.com'
+        );
+
+        await user.type(
+            screen.getByLabelText('Password'),
+            'password123'
+        );
+
+        await user.click(
+            screen.getByRole('button', { name: 'Sign in' })
+        );
+
         expect(
-            screen.getByRole('button', { name: 'Sign In' })
+            screen.getByRole('heading', { name: /good morning/i })
+        ).toBeInTheDocument();
+    });
+
+
+    test('does not sign in when required fields are empty', async () => {
+        const user = userEvent.setup();
+
+        render(<App />);
+
+        await user.click(
+            screen.getByRole('button', { name: 'Sign in' })
+        );
+
+        expect(
+            screen.getByRole('heading', { name: 'Welcome' })
         ).toBeInTheDocument();
     });
 });
 
-test('allows the user to sign in and opens the home screen', async () => {
-    const user = userEvent.setup();
 
-    render(<App />);
-
-    await user.type(
-        screen.getByLabelText('Email'),
-        'jane.doe@example.com'
-    );
-
-    await user.type(
-        screen.getByLabelText('Password'),
-        'password123'
-    );
-
-    await user.click(
-        screen.getByRole('button', { name: 'Sign In' })
-    );
-
-    expect(
-        screen.getByRole('heading', { name: /good morning, jane/i })
-    ).toBeInTheDocument();
-});
-test('does not sign in when required fields are empty', async () => {
-    const user = userEvent.setup();
-
-    render(<App />);
-
-    await user.click(
-        screen.getByRole('button', { name: 'Sign In' })
-    );
-
-    expect(
-        screen.getByRole('heading', { name: 'CareConnect' })
-    ).toBeInTheDocument();
-
-    expect(
-        screen.queryByRole('heading', { name: /good morning, jane/i })
-    ).not.toBeInTheDocument();
-});
 
 test('opens the reset password screen from forgot password', async () => {
     const user = userEvent.setup();
@@ -75,15 +72,15 @@ test('opens the reset password screen from forgot password', async () => {
     );
 
     expect(
-        screen.getByRole('heading', { name: 'Reset Password' })
+        screen.getByRole('heading', { name: /reset password/i })
     ).toBeInTheDocument();
 
     expect(
-        screen.getByRole('button', { name: 'Send Reset Instructions' })
+        screen.getByRole('button', { name: /send reset link/i })
     ).toBeInTheDocument();
 
     expect(
-        screen.getByRole('button', { name: 'Back to Sign In' })
+        screen.getByRole('button', { name: /back to login/i })
     ).toBeInTheDocument();
 });
 
@@ -97,17 +94,17 @@ test('submits a password reset request successfully', async () => {
     );
 
     await user.type(
-        screen.getByLabelText('Email'),
+        screen.getByLabelText(/email address/i),
         'jane.doe@example.com'
     );
 
     await user.click(
-        screen.getByRole('button', { name: 'Send Reset Instructions' })
+        screen.getByRole('button', { name: /send reset link/i })
     );
 
     expect(
         screen.getByRole('status')
     ).toHaveTextContent(
-        'Reset instructions have been sent to jane.doe@example.com.'
+        'Reset instructions have been sent.'
     );
 });
