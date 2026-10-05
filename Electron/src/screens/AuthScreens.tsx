@@ -26,19 +26,22 @@ export function Login({
             Email address
             <input type="email" placeholder="name@example.com" required />
           </label>
-          <label>
-            <span className="label-row">
-              Password
+          <div>
+            <div className="label-row">
+              <label htmlFor="password">Password</label>
               <button
                 type="button"
                 className="text-link"
+                aria-label="Forgot password?"
                 onClick={() => onNavigate("recovery")}
               >
                 Forgot password?
               </button>
-            </span>
+            </div>
+
             <span className="password-input">
               <input
+                id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 required
@@ -52,7 +55,7 @@ export function Login({
                 ◉
               </button>
             </span>
-          </label>
+          </div>
           <button className="primary auth-submit" type="submit">
             Sign in
           </button>
