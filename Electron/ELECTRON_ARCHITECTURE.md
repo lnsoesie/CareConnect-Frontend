@@ -30,6 +30,7 @@ The preload script exposes a minimal `window.careConnectDesktop` API through `co
 - `getAppInfo()` returns the desktop application name, version, and platform.
 - `onNavigate(callback)` handles allowlisted navigation requests from the native application menu.
 - `onShowShortcuts(callback)` opens the renderer's keyboard-shortcut guide.
+- `onShowFileMenu(callback)` opens the keyboard-accessible renderer File menu when the native window receives `Alt+F`.
 
 The preload script does not expose `ipcRenderer`, generic channel names, filesystem access, shell access, or arbitrary message payloads.
 

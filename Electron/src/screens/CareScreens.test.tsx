@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
   Dashboard,
@@ -87,6 +87,92 @@ describe("CareScreens", () => {
       );
     });
 
+    test("appointment tabs respond to arrows, Home, and End", async () => {
+      const user = userEvent.setup();
+      render(<Appointments />);
+      const upcoming = screen.getByRole("tab", { name: "Upcoming" });
+      upcoming.focus();
+
+      await user.keyboard("{ArrowRight}");
+      expect(screen.getByRole("tab", { name: "Past" })).toHaveFocus();
+      expect(screen.getByRole("tab", { name: "Past" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      expect(screen.getByRole("tabpanel")).toHaveTextContent(
+        "No past appointments.",
+      );
+
+      await user.keyboard("{ArrowRight}");
+      expect(screen.getByRole("tab", { name: "Cancelled" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      await user.keyboard("{Home}");
+      expect(screen.getByRole("tab", { name: "Upcoming" })).toHaveFocus();
+      await user.keyboard("{End}");
+      expect(screen.getByRole("tab", { name: "Cancelled" })).toHaveFocus();
+    });
+
+    test("scheduling adds an appointment to Upcoming", async () => {
+      const user = userEvent.setup();
+      render(<Appointments />);
+      await user.click(
+        screen.getByRole("button", { name: "+ Schedule appointment" }),
+      );
+
+      const dialog = screen.getByRole("dialog", {
+        name: "Schedule appointment",
+      });
+      await user.type(
+        within(dialog).getByLabelText("Appointment"),
+        "Eye exam",
+      );
+      await user.type(within(dialog).getByLabelText("Provider"), "Dr. Jones");
+      await user.type(within(dialog).getByLabelText("Date"), "2026-11-12");
+      await user.type(within(dialog).getByLabelText("Time"), "10:30");
+      await user.click(
+        within(dialog).getByRole("button", { name: "Schedule appointment" }),
+      );
+
+      expect(screen.getByRole("tabpanel")).toHaveTextContent("Eye exam");
+      expect(screen.getByRole("tabpanel")).toHaveTextContent("Dr. Jones");
+      expect(
+        screen.queryByRole("dialog", { name: "Schedule appointment" }),
+      ).not.toBeInTheDocument();
+    });
+
+    test("schedule dialog traps focus and restores it when dismissed", async () => {
+      const user = userEvent.setup();
+      render(<Appointments />);
+      const trigger = screen.getByRole("button", {
+        name: "+ Schedule appointment",
+      });
+      await user.click(trigger);
+
+      const dialog = screen.getByRole("dialog", {
+        name: "Schedule appointment",
+      });
+      const closeButton = within(dialog).getByRole("button", {
+        name: "Close Schedule appointment",
+      });
+      const submitButton = within(dialog).getByRole("button", {
+        name: "Schedule appointment",
+      });
+
+      expect(closeButton).toHaveFocus();
+      await user.keyboard("{Shift>}{Tab}{/Shift}");
+      expect(submitButton).toHaveFocus();
+      await user.keyboard("{Tab}");
+      expect(closeButton).toHaveFocus();
+      await user.keyboard("{Escape}");
+
+      expect(
+        screen.queryByRole("dialog", { name: "Schedule appointment" }),
+      ).not.toBeInTheDocument();
+      expect(trigger).toHaveFocus();
+    });
+
     test("renders scheduling help", () => {
     render(<Appointments />);
 
@@ -124,6 +210,37 @@ describe("CareScreens", () => {
       ).toBeInTheDocument();
 
       expect(screen.getAllByRole("button", { name: "Details" })).toHaveLength(3);
+    });
+
+    test("Add medication creates an entry and Details shows its information", async () => {
+      const user = userEvent.setup();
+      render(<Medications />);
+      await user.click(
+        screen.getByRole("button", { name: "+ Add medication" }),
+      );
+      const dialog = screen.getByRole("dialog", { name: "Add medication" });
+      await user.type(
+        within(dialog).getByLabelText("Medication name"),
+        "Vitamin D",
+      );
+      await user.type(within(dialog).getByLabelText("Dose"), "1000 IU");
+      await user.type(
+        within(dialog).getByLabelText("Schedule"),
+        "Once daily",
+      );
+      await user.click(
+        within(dialog).getByRole("button", { name: "Add medication" }),
+      );
+
+      const row = screen.getByText("Vitamin D").closest(".medication-row");
+      expect(row).not.toBeNull();
+      expect(within(row as HTMLElement).getByText("1000 IU")).toBeInTheDocument();
+      await user.click(
+        within(row as HTMLElement).getByRole("button", { name: "Details" }),
+      );
+      expect(
+        screen.getByRole("dialog", { name: "Vitamin D" }),
+      ).toHaveTextContent("Once daily");
     });
   });
 
@@ -296,6 +413,26 @@ test("renders conversation", () => {
         screen.getByRole("button", { name: /Edit Profile/i }),
       ).toBeInTheDocument();
     });
+
+    test("Edit Profile updates displayed profile details", async () => {
+      const user = userEvent.setup();
+      render(<Profile />);
+      await user.click(
+        screen.getByRole("button", { name: /Edit Profile/i }),
+      );
+      const dialog = screen.getByRole("dialog", { name: "Edit profile" });
+      const name = within(dialog).getByLabelText("Full name");
+      await user.clear(name);
+      await user.type(name, "Jane Updated Doe");
+      await user.click(
+        within(dialog).getByRole("button", { name: "Save profile" }),
+      );
+
+      expect(screen.getAllByText("Jane Updated Doe")).toHaveLength(2);
+      expect(
+        screen.queryByRole("dialog", { name: "Edit profile" }),
+      ).not.toBeInTheDocument();
+    });
   });
 
   describe("Settings", () => {
@@ -341,6 +478,67 @@ test("renders conversation", () => {
       expect(
         screen.getByRole("status"),
       ).toHaveTextContent("Your settings have been saved.");
+    });
+
+    test("password and two-step actions provide workflows", async () => {
+      const user = userEvent.setup();
+      render(<Settings />);
+      await user.click(
+        screen.getByRole("button", { name: "Change password" }),
+      );
+      const passwordDialog = screen.getByRole("dialog", {
+        name: "Change password",
+      });
+      await user.type(
+        within(passwordDialog).getByLabelText("Current password"),
+        "old-password",
+      );
+      await user.type(
+        within(passwordDialog).getByLabelText("New password"),
+        "new-password",
+      );
+      await user.type(
+        within(passwordDialog).getByLabelText("Confirm new password"),
+        "different-password",
+      );
+      await user.click(
+        within(passwordDialog).getByRole("button", {
+          name: "Save password change request",
+        }),
+      );
+      expect(await screen.findByRole("alert")).toHaveTextContent(
+        "The new passwords do not match.",
+      );
+
+      const confirmation = within(passwordDialog).getByLabelText(
+        "Confirm new password",
+      );
+      await user.clear(confirmation);
+      await user.type(confirmation, "new-password");
+      await user.click(
+        within(passwordDialog).getByRole("button", {
+          name: "Save password change request",
+        }),
+      );
+      expect(await screen.findByRole("status")).toHaveTextContent(
+        "password change request is saved for this demo",
+      );
+
+      await user.click(screen.getByRole("button", { name: "Set up" }));
+      const twoStepDialog = screen.getByRole("dialog", {
+        name: "Set up two-step verification",
+      });
+      await user.click(
+        within(twoStepDialog).getByRole("button", {
+          name: "Enable two-step verification",
+        }),
+      );
+      expect(await screen.findByRole("status")).toHaveTextContent(
+        "Two-step verification setup is saved for this demo account.",
+      );
+      expect(
+        screen.getByRole("button", { name: "Enabled" }),
+      ).toBeInTheDocument();
     });
   });
 });

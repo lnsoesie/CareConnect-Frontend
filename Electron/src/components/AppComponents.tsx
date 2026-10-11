@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { useId, useLayoutEffect, useRef, type ReactNode } from "react"
 import type { IconName } from "../types"
 
 interface IconProps {
@@ -108,5 +108,91 @@ export function Detail({ label, value }: DetailProps) {
       <small>{label}</small>
       <b>{value}</b>
     </span>
+  )
+}
+
+export function ModalDialog({
+  title,
+  onClose,
+  children,
+}: {
+  title: string
+  onClose: () => void
+  children: ReactNode
+}) {
+  const titleId = useId()
+  const triggerRef = useRef<HTMLElement | null>(
+    document.activeElement as HTMLElement | null,
+  )
+
+  useLayoutEffect(() => {
+    const dialog = document.querySelector<HTMLElement>(
+      `[aria-labelledby="${titleId}"]`,
+    )
+    const firstControl = dialog?.querySelector<HTMLElement>(
+      "button, input, select, textarea",
+    )
+    firstControl?.focus()
+  }, [titleId])
+
+  const close = () => {
+    onClose()
+    window.requestAnimationFrame(() => triggerRef.current?.focus())
+  }
+
+  return (
+    <div
+      className="shortcut-overlay"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) close()
+      }}
+    >
+      <section
+        className="shortcut-dialog action-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            event.preventDefault()
+            close()
+            return
+          }
+          if (event.key !== "Tab") return
+
+          const controls = Array.from(
+            event.currentTarget.querySelectorAll<HTMLElement>(
+              'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+            ),
+          ).filter((control) => !control.hasAttribute("disabled"))
+          if (!controls.length) return
+
+          const first = controls[0]
+          const last = controls[controls.length - 1]
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault()
+            last.focus()
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault()
+            first.focus()
+          }
+        }}
+      >
+        <header>
+          <div>
+            <h2 id={titleId}>{title}</h2>
+          </div>
+          <button
+            type="button"
+            className="shortcut-close"
+            aria-label={`Close ${title}`}
+            onClick={close}
+          >
+            ×
+          </button>
+        </header>
+        {children}
+      </section>
+    </div>
   )
 }
