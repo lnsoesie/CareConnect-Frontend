@@ -108,3 +108,19 @@ test('submits a password reset request successfully', async () => {
         'Reset instructions have been sent.'
     );
 });
+
+test('login form fields and buttons have accessible names', () => {
+    render(<App />);
+
+    expect(
+        screen.getByRole('textbox', { name: 'Email address' })
+    ).toHaveAccessibleName('Email address');
+
+    expect(
+        screen.getByLabelText('Password')
+    ).toHaveAccessibleName('Password');
+
+    expect(
+        screen.getByRole('button', { name: 'Sign in' })
+    ).toHaveAccessibleName('Sign in');
+});

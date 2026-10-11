@@ -1,6 +1,9 @@
 import { render, screen, fireEvent, waitFor, within, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Shell } from "./AppShell";
+import { axe, toHaveNoViolations } from "jest-axe";
+
+expect.extend(toHaveNoViolations);
 
 const onNavigate = jest.fn();
 
@@ -17,6 +20,15 @@ beforeEach(() => {
 });
 
 describe("Shell", () => {
+  test("application shell has no automated accessibility violations", async () => {
+    const { container } = renderShell();
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+
   test("renders the application shell", () => {
     renderShell();
 
@@ -377,7 +389,7 @@ describe("Shell", () => {
 
     renderShell();
 
-    
+
   });
 
   test("handles Electron app info failure", async () => {
@@ -480,8 +492,8 @@ describe("Shell", () => {
 
     renderShell();
 
-    
-    
+
+
   });
 
   test("handles Windows test notification error", async () => {
@@ -500,8 +512,8 @@ describe("Shell", () => {
 
     renderShell();
 
-  
 
-    
+
+
   });
 });
