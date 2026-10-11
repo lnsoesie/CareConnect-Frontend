@@ -6,6 +6,12 @@ import {
   within,
   act,
 } from "@testing-library/react"
+import { render, screen, fireEvent, waitFor, within, act } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Shell } from "./AppShell";
+import { axe, toHaveNoViolations } from "jest-axe";
+
+expect.extend(toHaveNoViolations);
 
 import userEvent from "@testing-library/user-event"
 
@@ -27,6 +33,15 @@ beforeEach(() => {
 })
 
 describe("Shell", () => {
+  test("application shell has no automated accessibility violations", async () => {
+    const { container } = renderShell();
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+
   test("renders the application shell", () => {
     renderShell()
 
@@ -580,6 +595,8 @@ describe("Shell", () => {
     renderShell()
   })
 
+  });
+
   test("handles Electron app info failure", async () => {
     ;(window as any).careConnectDesktop = {
       getAppInfo: jest.fn().mockRejectedValue(new Error("Failed")),
@@ -718,6 +735,9 @@ describe("Shell", () => {
     renderShell()
   })
 
+
+  });
+
   test("handles Windows test notification error", async () => {
     const showTestNotification = jest
 
@@ -739,3 +759,8 @@ describe("Shell", () => {
     renderShell()
   })
 })
+
+
+
+  });
+});
