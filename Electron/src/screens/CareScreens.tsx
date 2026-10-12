@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useRef, useState, type FormEvent, type KeyboardEvent } from "react"
 
 import {
   Card,
   Detail,
   Icon,
+  ModalDialog,
   PageHeading,
   SectionTitle,
 } from "../components/AppComponents"
@@ -121,70 +122,189 @@ export function Dashboard({
   )
 }
 
-const appointments = [
-  [
-    "MAR 14",
-    "Cardiology follow-up",
-    "Dr. Sarah Chen",
-    "Today · 2:30 PM",
-    "Confirmed",
-  ],
-  [
-    "MAR 21",
-    "Physical therapy",
-    "Michael Torres, PT",
-    "Friday · 10:00 AM",
-    "Scheduled",
-  ],
-  [
-    "APR 03",
-    "Annual wellness visit",
-    "Dr. Robert Kim",
-    "Thursday · 9:00 AM",
-    "Scheduled",
-  ],
+type AppointmentStatus = "Upcoming" | "Past" | "Cancelled"
+
+interface AppointmentItem {
+  date: string
+  title: string
+  provider: string
+  dateTime: string
+  status: AppointmentStatus | "Confirmed" | "Scheduled"
+}
+
+const initialAppointments: AppointmentItem[] = [
+  {
+    date: "MAR 14",
+    title: "Cardiology follow-up",
+    provider: "Dr. Sarah Chen",
+    dateTime: "Today · 2:30 PM",
+    status: "Confirmed",
+  },
+  {
+    date: "MAR 21",
+    title: "Physical therapy",
+    provider: "Michael Torres, PT",
+    dateTime: "Friday · 10:00 AM",
+    status: "Scheduled",
+  },
+  {
+    date: "APR 03",
+    title: "Annual wellness visit",
+    provider: "Dr. Robert Kim",
+    dateTime: "Thursday · 9:00 AM",
+    status: "Scheduled",
+  },
 ]
 
+const appointmentTabs: AppointmentStatus[] = ["Upcoming", "Past", "Cancelled"]
+
 export function Appointments() {
+  const [activeTab, setActiveTab] = useState<AppointmentStatus>("Upcoming")
+  const [appointmentList, setAppointmentList] = useState(initialAppointments)
+  const [showScheduleForm, setShowScheduleForm] = useState(false)
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const visibleAppointments = appointmentList.filter((appointment) =>
+    activeTab === "Upcoming"
+      ? appointment.status === "Confirmed" || appointment.status === "Scheduled"
+      : appointment.status === activeTab,
+  )
+
+  const selectTab = (index: number) => {
+    const nextIndex =
+      (index + appointmentTabs.length) % appointmentTabs.length
+    setActiveTab(appointmentTabs[nextIndex])
+    tabRefs.current[nextIndex]?.focus()
+  }
+
+  const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const index = appointmentTabs.indexOf(
+      event.currentTarget.textContent as AppointmentStatus,
+    )
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      event.preventDefault()
+      selectTab(index + 1)
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      event.preventDefault()
+      selectTab(index - 1)
+    } else if (event.key === "Home") {
+      event.preventDefault()
+      selectTab(0)
+    } else if (event.key === "End") {
+      event.preventDefault()
+      selectTab(appointmentTabs.length - 1)
+    }
+  }
+
+  const scheduleAppointment = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const title = String(formData.get("appointment") ?? "").trim()
+    const provider = String(formData.get("provider") ?? "").trim()
+    const date = String(formData.get("date") ?? "")
+    const time = String(formData.get("time") ?? "")
+    if (!title || !provider || !date || !time) return
+
+    const appointmentDate = new Date(`${date}T00:00:00`)
+    const formattedDate = appointmentDate
+      .toLocaleDateString("en-US", { month: "short", day: "2-digit" })
+      .toUpperCase()
+    const formattedDateTime = `${appointmentDate.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+    })} · ${time}`
+    setAppointmentList((current) => [
+      ...current,
+      {
+        date: formattedDate,
+        title,
+        provider,
+        dateTime: formattedDateTime,
+        status: "Scheduled",
+      },
+    ])
+    setActiveTab("Upcoming")
+    setShowScheduleForm(false)
+  }
+
   return (
     <>
       <PageHeading
         title="Appointments"
         subtitle="View and manage your upcoming care visits."
-        action={<button className="primary">+ Schedule appointment</button>}
+        action={
+          <button
+            className="primary"
+            onClick={() => setShowScheduleForm(true)}
+          >
+            + Schedule appointment
+          </button>
+        }
       />
-      <div className="tabs" role="tablist" aria-label="Appointment status">
-        <button className="active" role="tab" aria-selected="true">
-          Upcoming
-        </button>
-        <button role="tab" aria-selected="false">
-          Past
-        </button>
-        <button role="tab" aria-selected="false">
-          Cancelled
-        </button>
-      </div>
-      <Card className="list-card">
-        {appointments.map(([date, title, provider, dateTime, status]) => (
-          <div className="list-row appointment-row" key={title}>
-            <time>{date}</time>
-            <div>
-              <b>{title}</b>
-              <p>{provider}</p>
-            </div>
-            <div>
-              <b>{dateTime}</b>
-              <p>In person</p>
-            </div>
-            <span
-              className={`pill ${status === "Confirmed" ? "confirmed" : ""}`}
-            >
-              {status}
-            </span>
-            <span className="chevron">›</span>
-          </div>
+      <div
+        className="tabs"
+        role="tablist"
+        aria-label="Appointment status"
+        aria-orientation="horizontal"
+      >
+        {appointmentTabs.map((tab, index) => (
+          <button
+            key={tab}
+            ref={(element) => {
+              tabRefs.current[index] = element
+            }}
+            className={activeTab === tab ? "active" : ""}
+            id={`appointment-tab-${tab.toLowerCase()}`}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab}
+            aria-controls="appointment-panel"
+            tabIndex={activeTab === tab ? 0 : -1}
+            onClick={() => setActiveTab(tab)}
+            onKeyDown={handleTabKeyDown}
+          >
+            {tab}
+          </button>
         ))}
-      </Card>
+      </div>
+      <div
+        id="appointment-panel"
+        role="tabpanel"
+        aria-labelledby={`appointment-tab-${activeTab.toLowerCase()}`}
+        tabIndex={0}
+      >
+        <Card className="list-card">
+          {visibleAppointments.length ? (
+            visibleAppointments.map(
+              ({ date, title, provider, dateTime, status }) => (
+                <div className="list-row appointment-row" key={title}>
+                  <time>{date}</time>
+                  <div>
+                    <b>{title}</b>
+                    <p>{provider}</p>
+                  </div>
+                  <div>
+                    <b>{dateTime}</b>
+                    <p>In person</p>
+                  </div>
+                  <span
+                    className={`pill ${status === "Confirmed" ? "confirmed" : ""}`}
+                  >
+                    {status}
+                  </span>
+                  <span className="chevron" aria-hidden="true">
+                    ›
+                  </span>
+                </div>
+              ),
+            )
+          ) : (
+            <p className="empty-state">
+              No {activeTab.toLowerCase()} appointments.
+            </p>
+          )}
+        </Card>
+      </div>
       <Card className="help-card">
         <SectionTitle icon="info">NEED HELP?</SectionTitle>
         <p>
@@ -193,28 +313,105 @@ export function Appointments() {
           <span>Monday–Friday, 8:00 AM–6:00 PM</span>
         </p>
       </Card>
+      {showScheduleForm && (
+        <ModalDialog
+          title="Schedule appointment"
+          onClose={() => setShowScheduleForm(false)}
+        >
+          <form className="action-form" onSubmit={scheduleAppointment}>
+            <label>
+              Appointment
+              <input name="appointment" required />
+            </label>
+            <label>
+              Provider
+              <input name="provider" required />
+            </label>
+            <label>
+              Date
+              <input name="date" type="date" required />
+            </label>
+            <label>
+              Time
+              <input name="time" type="time" required />
+            </label>
+            <button className="primary" type="submit">
+              Schedule appointment
+            </button>
+          </form>
+        </ModalDialog>
+      )}
     </>
   )
 }
 
-const medications = [
-  ["Lisinopril", "10 mg tablet", "Once daily · 8:00 AM", "Taken today"],
-  ["Metformin", "500 mg tablet", "Twice daily · With meals", "Next at 6:00 PM"],
-  ["Atorvastatin", "20 mg tablet", "Once daily · 9:00 PM", "Due tonight"],
+interface MedicationItem {
+  name: string
+  dose: string
+  schedule: string
+  status: string
+}
+
+const initialMedications: MedicationItem[] = [
+  {
+    name: "Lisinopril",
+    dose: "10 mg tablet",
+    schedule: "Once daily · 8:00 AM",
+    status: "Taken today",
+  },
+  {
+    name: "Metformin",
+    dose: "500 mg tablet",
+    schedule: "Twice daily · With meals",
+    status: "Next at 6:00 PM",
+  },
+  {
+    name: "Atorvastatin",
+    dose: "20 mg tablet",
+    schedule: "Once daily · 9:00 PM",
+    status: "Due tonight",
+  },
 ]
 
 export function Medications() {
+  const [medicationList, setMedicationList] = useState(initialMedications)
+  const [selectedMedication, setSelectedMedication] =
+    useState<MedicationItem | null>(null)
+  const [showAddForm, setShowAddForm] = useState(false)
+
+  const addMedication = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const name = String(formData.get("name") ?? "").trim()
+    const dose = String(formData.get("dose") ?? "").trim()
+    const schedule = String(formData.get("schedule") ?? "").trim()
+    if (!name || !dose || !schedule) return
+
+    setMedicationList((current) => [
+      ...current,
+      { name, dose, schedule, status: "Added today" },
+    ])
+    setShowAddForm(false)
+  }
+
   return (
     <>
       <PageHeading
         title="Medications"
         subtitle="Track your prescriptions and daily schedule."
-        action={<button className="primary">+ Add medication</button>}
+        action={
+          <button
+            className="primary"
+            onClick={() => setShowAddForm(true)}
+          >
+            + Add medication
+          </button>
+        }
       />
       <div className="metric-grid">
         <Card>
           <small>ACTIVE MEDICATIONS</small>
-          <strong>3</strong>
+          <strong>{medicationList.length}</strong>
           <p>All prescriptions current</p>
         </Card>
         <Card>
@@ -230,7 +427,7 @@ export function Medications() {
       </div>
       <Card className="list-card medication-card">
         <SectionTitle>MY MEDICATIONS</SectionTitle>
-        {medications.map(([name, dose, schedule, status], index) => (
+        {medicationList.map(({ name, dose, schedule, status }, index) => (
           <div className="list-row medication-row" key={name}>
             <span className="med-icon">♨</span>
             <div>
@@ -242,7 +439,14 @@ export function Medications() {
               <p>{schedule}</p>
             </div>
             <span className={`pill med-status status-${index}`}>{status}</span>
-            <button className="outline">Details</button>
+            <button
+              className="outline"
+              onClick={() =>
+                setSelectedMedication({ name, dose, schedule, status })
+              }
+            >
+              Details
+            </button>
           </div>
         ))}
       </Card>
@@ -250,6 +454,55 @@ export function Medications() {
         <Icon name="info" /> Never change or stop a medication without speaking
         to your care team.
       </div>
+      {showAddForm && (
+        <ModalDialog
+          title="Add medication"
+          onClose={() => setShowAddForm(false)}
+        >
+          <form className="action-form" onSubmit={addMedication}>
+            <label>
+              Medication name
+              <input name="name" required />
+            </label>
+            <label>
+              Dose
+              <input name="dose" placeholder="e.g. 10 mg tablet" required />
+            </label>
+            <label>
+              Schedule
+              <input name="schedule" placeholder="e.g. Once daily · 8:00 AM" required />
+            </label>
+            <button className="primary" type="submit">
+              Add medication
+            </button>
+          </form>
+        </ModalDialog>
+      )}
+      {selectedMedication && (
+        <ModalDialog
+          title={selectedMedication.name}
+          onClose={() => setSelectedMedication(null)}
+        >
+          <div className="action-form medication-details">
+            <p>
+              <b>Dose</b>
+              <span>{selectedMedication.dose}</span>
+            </p>
+            <p>
+              <b>Schedule</b>
+              <span>{selectedMedication.schedule}</span>
+            </p>
+            <p>
+              <b>Status</b>
+              <span>{selectedMedication.status}</span>
+            </p>
+            <p className="medication-safety-note">
+              Never change or stop a medication without speaking to your care
+              team.
+            </p>
+          </div>
+        </ModalDialog>
+      )}
     </>
   )
 }
@@ -437,33 +690,63 @@ export function Conversation({
   )
 }
 
+interface ProfileDetails {
+  name: string
+  email: string
+  phone: string
+}
+
+const initialProfile: ProfileDetails = {
+  name: "Jane Marie Doe",
+  email: "jane.doe@example.com",
+  phone: "(555) 867-5309",
+}
+
 export function Profile() {
+  const [profile, setProfile] = useState(initialProfile)
+  const [editing, setEditing] = useState(false)
+
+  const saveProfile = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const name = String(formData.get("name") ?? "").trim()
+    const email = String(formData.get("email") ?? "").trim()
+    const phone = String(formData.get("phone") ?? "").trim()
+    if (!name || !email || !phone) return
+    setProfile({ name, email, phone })
+    setEditing(false)
+  }
+
   return (
     <>
       <PageHeading
         title="Profile"
         subtitle="Manage your personal information and account settings"
-        action={<button className="primary">□　Edit Profile</button>}
+        action={
+          <button className="primary" onClick={() => setEditing(true)}>
+            □　Edit Profile
+          </button>
+        }
       />
       <div className="profile-grid">
         <Card className="identity-card">
           <span className="profile-avatar">JD</span>
-          <h2>Jane Marie Doe</h2>
+          <h2>{profile.name}</h2>
           <p>Patient</p>
           <hr />
           <small>Email</small>
-          <span>jane.doe@example.com</span>
+          <span>{profile.email}</span>
           <small>Phone</small>
-          <span>(555) 867-5309</span>
+          <span>{profile.phone}</span>
           <b className="active-account">●　Active Account</b>
         </Card>
         <Card className="personal-card">
           <SectionTitle icon="user">PERSONAL INFORMATION</SectionTitle>
           <div className="detail-grid">
-            <Detail label="FULL NAME" value="Jane Marie Doe" />
+            <Detail label="FULL NAME" value={profile.name} />
             <Detail label="DATE OF BIRTH" value="March 14, 1985" />
-            <Detail label="EMAIL ADDRESS" value="jane.doe@example.com" />
-            <Detail label="PHONE NUMBER" value="(555) 867-5309" />
+            <Detail label="EMAIL ADDRESS" value={profile.email} />
+            <Detail label="PHONE NUMBER" value={profile.phone} />
           </div>
         </Card>
         <Card className="address-card">
@@ -488,6 +771,35 @@ export function Profile() {
           </div>
         </Card>
       </div>
+      {editing && (
+        <ModalDialog
+          title="Edit profile"
+          onClose={() => setEditing(false)}
+        >
+          <form className="action-form" onSubmit={saveProfile}>
+            <label>
+              Full name
+              <input name="name" defaultValue={profile.name} required />
+            </label>
+            <label>
+              Email address
+              <input
+                name="email"
+                type="email"
+                defaultValue={profile.email}
+                required
+              />
+            </label>
+            <label>
+              Phone number
+              <input name="phone" defaultValue={profile.phone} required />
+            </label>
+            <button className="primary" type="submit">
+              Save profile
+            </button>
+          </form>
+        </ModalDialog>
+      )}
     </>
   )
 }
@@ -514,6 +826,31 @@ function SettingToggle({
 
 export function Settings() {
   const [saved, setSaved] = useState(false)
+  const [accountDialog, setAccountDialog] = useState<"password" | "two-step" | null>(
+    null,
+  )
+  const [twoStepEnabled, setTwoStepEnabled] = useState(false)
+  const [accountMessage, setAccountMessage] = useState("")
+  const [accountError, setAccountError] = useState("")
+
+  const saveAccountAction = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (accountDialog === "two-step") {
+      setTwoStepEnabled(true)
+      setAccountMessage(
+        "Two-step verification setup is saved for this demo account.",
+      )
+    } else {
+      const formData = new FormData(event.currentTarget)
+      if (formData.get("new-password") !== formData.get("confirm-password")) {
+        setAccountError("The new passwords do not match.")
+        return
+      }
+      setAccountMessage("Your password change request is saved for this demo.")
+    }
+    setAccountError("")
+    setAccountDialog(null)
+  }
 
   return (
     <>
@@ -564,14 +901,32 @@ export function Settings() {
               <b>Password</b>
               <small>Last changed 3 months ago</small>
             </span>
-            <button className="outline">Change password</button>
+            <button
+              className="outline"
+              onClick={() => {
+                setAccountMessage("")
+                setAccountError("")
+                setAccountDialog("password")
+              }}
+            >
+              Change password
+            </button>
           </div>
           <div className="settings-action-row">
             <span>
               <b>Two-step verification</b>
               <small>Add an extra layer of protection to your account.</small>
             </span>
-            <button className="outline">Set up</button>
+            <button
+              className="outline"
+              onClick={() => {
+                setAccountMessage("")
+                setAccountError("")
+                setAccountDialog("two-step")
+              }}
+            >
+              {twoStepEnabled ? "Enabled" : "Set up"}
+            </button>
           </div>
           <label className="select-setting">
             <span>
@@ -593,6 +948,85 @@ export function Settings() {
           Contact CareConnect Support at <strong>(555) 018-2200</strong>.
         </span>
       </div>
+      {accountMessage && (
+        <p className="save-confirmation" role="status" aria-live="polite">
+          {accountMessage}
+        </p>
+      )}
+      {accountDialog && (
+        <ModalDialog
+          title={
+            accountDialog === "password"
+              ? "Change password"
+              : "Set up two-step verification"
+          }
+          onClose={() => setAccountDialog(null)}
+        >
+          {accountDialog === "password" ? (
+            <form className="action-form" onSubmit={saveAccountAction}>
+              <p>
+                This demo validates the request locally and does not update a
+                real account password.
+              </p>
+              <label>
+                Current password
+                <input
+                  name="current-password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                />
+              </label>
+              <label>
+                New password
+                <input
+                  name="new-password"
+                  type="password"
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+              </label>
+              <label>
+                Confirm new password
+                <input
+                  name="confirm-password"
+                  type="password"
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+              </label>
+              <button className="primary" type="submit">
+                Save password change request
+              </button>
+            </form>
+          ) : (
+            <form className="action-form" onSubmit={saveAccountAction}>
+              <p>
+                Add an extra sign-in step by confirming your email address.
+              </p>
+              <label>
+                Email address
+                <input
+                  name="two-step-email"
+                  type="email"
+                  defaultValue="jane.doe@example.com"
+                  required
+                />
+              </label>
+              <button className="primary" type="submit">
+                Enable two-step verification
+              </button>
+            </form>
+          )}
+          {accountError && (
+            <p className="form-error" role="alert">
+              {accountError}
+            </p>
+          )}
+        </ModalDialog>
+      )}
     </>
   )
 }

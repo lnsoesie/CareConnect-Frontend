@@ -1,95 +1,163 @@
 import { useEffect, useRef, useState, type ReactNode } from "react"
-import { assetPathPrefix, Brand, Icon } from "./AppComponents"
+
+import { assetPathPrefix, Brand, Icon, ModalDialog } from "./AppComponents"
+
 import type { IconName, Screen } from "../types"
 
 interface NavItem {
   screen: Screen
+
   icon: IconName
+
   label: string
 }
 
 interface ShortcutRowProps {
   keys: string[]
+
   label: string
 }
 
 interface AppNotification {
   id: number
+
   title: string
+
   description: string
+
   time: string
+
   destination: Screen
+
   unread: boolean
 }
 
 const initialNotifications: AppNotification[] = [
   {
     id: 1,
+
     title: "Appointment reminder",
+
     description: "You have an appointment scheduled for today.",
+
     time: "Today, 2:30 PM",
+
     destination: "appointments",
+
     unread: true,
   },
+
   {
     id: 2,
+
     title: "Medication reminder",
+
     description: "A medication reminder is scheduled for today.",
+
     time: "Today, 6:00 PM",
+
     destination: "medications",
+
     unread: true,
   },
+
   {
     id: 3,
+
     title: "New care team message",
+
     description: "You have a new message from your care team.",
+
     time: "10 minutes ago",
+
     destination: "messages",
+
     unread: true,
   },
 ]
 
 const navItems: NavItem[] = [
   { screen: "dashboard", icon: "home", label: "Home" },
+
   { screen: "appointments", icon: "calendar", label: "Appointments" },
+
   { screen: "messages", icon: "message", label: "Messages" },
+
   { screen: "medications", icon: "pill", label: "Medications" },
+
   { screen: "profile", icon: "user", label: "Profile" },
+
   { screen: "settings", icon: "settings", label: "Settings" },
 ]
 
 export function Shell({
   screen,
+
   onNavigate,
+
   children,
 }: {
   screen: Screen
+
   onNavigate: (screen: Screen) => void
+
   children: ReactNode
 }) {
   const [contextMenu, setContextMenu] = useState<{
     x: number
+
     y: number
   } | null>(null)
+
+  const [showFileMenu, setShowFileMenu] = useState(false)
+
   const [showShortcuts, setShowShortcuts] = useState(false)
+
   const [showHelpMenu, setShowHelpMenu] = useState(false)
+
+  const [showAccountMenu, setShowAccountMenu] = useState(false)
+
+  const [showCalendar, setShowCalendar] = useState(false)
+
   const [showNotifications, setShowNotifications] = useState(false)
+
   const [desktopVersion, setDesktopVersion] = useState<string | null>(null)
+
   const [desktopPlatform, setDesktopPlatform] = useState<string | null>(null)
+
   const [notifications, setNotifications] = useState(initialNotifications)
+
   const [notificationStatus, setNotificationStatus] =
     useState<"idle" | "sending" | "sent" | "unavailable" | "error">("idle")
+
   const contextMenuRef = useRef<HTMLDivElement>(null)
+
   const contextMenuTriggerRef = useRef<HTMLElement | null>(null)
+
+  const fileMenuRef = useRef<HTMLDivElement>(null)
+
+  const fileButtonRef = useRef<HTMLButtonElement>(null)
+
   const shortcutDialogRef = useRef<HTMLDivElement>(null)
+
   const shortcutTriggerRef = useRef<HTMLElement | null>(null)
+
   const helpMenuRef = useRef<HTMLDivElement>(null)
+
   const helpButtonRef = useRef<HTMLButtonElement>(null)
+
+  const accountMenuRef = useRef<HTMLDivElement>(null)
+
+  const accountButtonRef = useRef<HTMLButtonElement>(null)
+
   const notificationsRef = useRef<HTMLDivElement>(null)
+
   const notificationsButtonRef = useRef<HTMLButtonElement>(null)
+
   const unreadNotificationCount = notifications.filter(
     (notification) => notification.unread,
   ).length
+
   const activeScreen =
     screen === "new-message" || screen === "conversation" ? "messages" : screen
 
@@ -101,49 +169,83 @@ export function Shell({
     if (!window.careConnectDesktop) return
 
     void window.careConnectDesktop
+
       .getAppInfo()
+
       .then((info) => {
         setDesktopVersion(info.version)
+
         setDesktopPlatform(info.platform)
       })
+
       .catch(() => {
         setDesktopVersion(null)
+
         setDesktopPlatform(null)
       })
 
-    return window.careConnectDesktop.onShowShortcuts(() => {
-      shortcutTriggerRef.current = (document.activeElement as HTMLElement)
-      setContextMenu(null)
-      setShowShortcuts(true)
-    })
+    const unsubscribeShortcuts = window.careConnectDesktop.onShowShortcuts(
+      () => {
+        shortcutTriggerRef.current = (document.activeElement as HTMLElement)
+
+        setContextMenu(null)
+
+        setShowShortcuts(true)
+      },
+    )
+
+    const unsubscribeFileMenu = window.careConnectDesktop.onShowFileMenu?.(
+      () => {
+        setShowHelpMenu(false)
+
+        setShowFileMenu(true)
+      },
+    )
+
+    return () => {
+      unsubscribeShortcuts?.()
+      unsubscribeFileMenu?.()
+    }
   }, [])
 
   useEffect(() => {
     if (!contextMenu) return
 
     contextMenuRef.current
+
       ?.querySelector<HTMLButtonElement>('[role="menuitem"]')
+
       ?.focus()
 
     const close = () => setContextMenu(null)
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         close()
+
         contextMenuTriggerRef.current?.focus()
       }
     }
 
     window.addEventListener("click", close)
+
     window.addEventListener("blur", close)
+
     window.addEventListener("resize", close)
+
     window.addEventListener("scroll", close, true)
+
     window.addEventListener("keydown", handleKeyDown)
 
     return () => {
       window.removeEventListener("click", close)
+
       window.removeEventListener("blur", close)
+
       window.removeEventListener("resize", close)
+
       window.removeEventListener("scroll", close, true)
+
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [contextMenu])
@@ -151,32 +253,61 @@ export function Shell({
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement
+
       const isEditing =
         target.matches("input, textarea, select") || target.isContentEditable
 
       if (event.altKey && !event.ctrlKey && !event.metaKey) {
         const destinations: Record<string, Screen> = {
           Digit1: "dashboard",
+
           Digit2: "appointments",
+
           Digit3: "messages",
+
           Digit4: "medications",
+
           Digit5: "profile",
+
           Digit6: "settings",
+
           KeyN: "new-message",
         }
+
         const destination = destinations[event.code]
+
         if (destination) {
           event.preventDefault()
+
           setContextMenu(null)
+
+          setShowFileMenu(false)
+
           setShowShortcuts(false)
+
           onNavigate(destination)
+
+          return
+        }
+
+        if (event.code === "KeyF") {
+          event.preventDefault()
+
+          setContextMenu(null)
+
+          setShowHelpMenu(false)
+
+          setShowFileMenu(true)
+
           return
         }
       }
 
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault()
+
         document.querySelector<HTMLInputElement>(".search input")?.focus()
+
         return
       }
 
@@ -186,51 +317,89 @@ export function Shell({
           ((event.ctrlKey || event.metaKey) && event.key === "/"))
       ) {
         event.preventDefault()
+
         shortcutTriggerRef.current = (document.activeElement as HTMLElement)
+
         setContextMenu(null)
+
         setShowShortcuts(true)
       }
     }
 
     window.addEventListener("keydown", handleShortcut)
+
     return () => window.removeEventListener("keydown", handleShortcut)
   }, [onNavigate])
+
+  useEffect(() => {
+    if (!showFileMenu) return
+
+    fileMenuRef.current
+
+      ?.querySelector<HTMLButtonElement>('[role="menuitem"]')
+
+      ?.focus()
+
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!fileMenuRef.current?.contains(event.target as Node)) {
+        setShowFileMenu(false)
+      }
+    }
+
+    window.addEventListener("mousedown", closeOnOutsideClick)
+
+    return () => {
+      window.removeEventListener("mousedown", closeOnOutsideClick)
+    }
+  }, [showFileMenu])
 
   useEffect(() => {
     if (!showShortcuts) return
 
     shortcutDialogRef.current
+
       ?.querySelector<HTMLButtonElement>("button")
+
       ?.focus()
 
     const handleDialogKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault()
+
         setShowShortcuts(false)
+
         shortcutTriggerRef.current?.focus()
+
         return
       }
 
       if (event.key !== "Tab") return
+
       const focusable = Array.from(
         shortcutDialogRef.current?.querySelectorAll<HTMLElement>(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         ) ?? [],
       )
+
       if (!focusable.length) return
 
       const first = focusable[0]
+
       const last = focusable[focusable.length - 1]
+
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault()
+
         last.focus()
       } else if (!event.shiftKey && document.activeElement === last) {
         event.preventDefault()
+
         first.focus()
       }
     }
 
     window.addEventListener("keydown", handleDialogKeyDown)
+
     return () => window.removeEventListener("keydown", handleDialogKeyDown)
   }, [showShortcuts])
 
@@ -238,7 +407,9 @@ export function Shell({
     if (!showHelpMenu) return
 
     helpMenuRef.current
+
       ?.querySelector<HTMLButtonElement>('[role="menuitem"]')
+
       ?.focus()
 
     const closeHelpMenu = (event: MouseEvent) => {
@@ -246,17 +417,22 @@ export function Shell({
         setShowHelpMenu(false)
       }
     }
+
     const handleHelpKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setShowHelpMenu(false)
+
         helpButtonRef.current?.focus()
       }
     }
 
     window.addEventListener("mousedown", closeHelpMenu)
+
     window.addEventListener("keydown", handleHelpKeyDown)
+
     return () => {
       window.removeEventListener("mousedown", closeHelpMenu)
+
       window.removeEventListener("keydown", handleHelpKeyDown)
     }
   }, [showHelpMenu])
@@ -269,40 +445,103 @@ export function Shell({
         setShowNotifications(false)
       }
     }
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setShowNotifications(false)
+
         notificationsButtonRef.current?.focus()
       }
     }
 
     window.addEventListener("mousedown", closeNotifications)
+
     window.addEventListener("keydown", handleKeyDown)
+
     return () => {
       window.removeEventListener("mousedown", closeNotifications)
+
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [showNotifications])
 
+  useEffect(() => {
+    if (!showAccountMenu) return
+
+    const items = Array.from(
+      accountMenuRef.current?.querySelectorAll<HTMLButtonElement>(
+        '[role="menuitem"]',
+      ) ?? [],
+    )
+
+    items[0]?.focus()
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const currentIndex = items.indexOf(
+        document.activeElement as HTMLButtonElement,
+      )
+
+      if (event.key === "Escape") {
+        setShowAccountMenu(false)
+
+        accountButtonRef.current?.focus()
+      } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault()
+
+        const direction = event.key === "ArrowDown" ? 1 : -1
+
+        items[(currentIndex + direction + items.length) % items.length]?.focus()
+      } else if (event.key === "Home" || event.key === "End") {
+        event.preventDefault()
+
+        items[event.key === "Home" ? 0 : items.length - 1]?.focus()
+      }
+    }
+
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!accountMenuRef.current?.contains(event.target as Node)) {
+        setShowAccountMenu(false)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+
+    window.addEventListener("mousedown", closeOnOutsideClick)
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+
+      window.removeEventListener("mousedown", closeOnOutsideClick)
+    }
+  }, [showAccountMenu])
+
   const openContextMenu = (x: number, y: number) => {
     const menuWidth = 220
+
     const menuHeight = 270
+
     contextMenuTriggerRef.current = (document.activeElement as HTMLElement)
+
     setContextMenu({
       x: Math.max(8, Math.min(x, window.innerWidth - menuWidth - 8)),
+
       y: Math.max(8, Math.min(y, window.innerHeight - menuHeight - 8)),
     })
   }
 
   const chooseContextAction = (destination: Screen) => {
     setContextMenu(null)
+
     onNavigate(destination)
   }
 
   const openShortcutGuide = (trigger?: HTMLElement) => {
     shortcutTriggerRef.current = trigger ?? contextMenuTriggerRef.current
+
     setContextMenu(null)
+
     setShowHelpMenu(false)
+
     setShowShortcuts(true)
   }
 
@@ -312,35 +551,48 @@ export function Shell({
         item.id === notification.id ? { ...item, unread: false } : item,
       ),
     )
+
     setShowNotifications(false)
+
     onNavigate(notification.destination)
   }
 
   const sendTestNotification = async () => {
     if (!window.careConnectDesktop) {
       setNotificationStatus("unavailable")
+
       return
     }
 
     setNotificationStatus("sending")
+
     try {
       const result = await window.careConnectDesktop.showTestNotification()
+
       if (!result.shown) {
         setNotificationStatus("unavailable")
+
         return
       }
 
       setNotifications((current) => [
         {
           id: Date.now(),
+
           title: "Test notification",
+
           description: "A Windows notification was requested.",
+
           time: "Just now",
+
           destination: "settings",
+
           unread: true,
         },
+
         ...current,
       ])
+
       setNotificationStatus("sent")
     } catch {
       setNotificationStatus("error")
@@ -352,12 +604,15 @@ export function Shell({
       className="app-shell"
       onContextMenu={(event) => {
         event.preventDefault()
+
         openContextMenu(event.clientX, event.clientY)
       }}
       onKeyDown={(event) => {
         if (event.shiftKey && event.key === "F10") {
           event.preventDefault()
+
           const target = (event.target as HTMLElement).getBoundingClientRect()
+
           openContextMenu(target.left + 16, target.top + 16)
         }
       }}
@@ -365,8 +620,100 @@ export function Shell({
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
-      <div className="desktop-menu">
-        <span>File</span>
+      <div
+        className="desktop-menu"
+        role="menubar"
+        aria-label="CareConnect menus"
+      >
+        <div className="file-menu" ref={fileMenuRef}>
+          <button
+            className="desktop-menu-button"
+            ref={fileButtonRef}
+            aria-haspopup="menu"
+            aria-expanded={showFileMenu}
+            onClick={() => {
+              setShowHelpMenu(false)
+
+              setShowFileMenu((open) => !open)
+            }}
+          >
+            File
+          </button>
+          {showFileMenu && (
+            <div
+              className="help-menu-popup"
+              role="menu"
+              aria-label="File menu"
+              onKeyDown={(event) => {
+                const items = Array.from(
+                  event.currentTarget.querySelectorAll<HTMLButtonElement>(
+                    '[role="menuitem"]',
+                  ),
+                )
+                const currentIndex = items.indexOf(
+                  document.activeElement as HTMLButtonElement,
+                )
+
+                if (event.key === "Escape") {
+                  event.preventDefault()
+                  setShowFileMenu(false)
+                  fileButtonRef.current?.focus()
+                } else if (
+                  (event.key === "ArrowDown" || event.key === "ArrowUp") &&
+                  items.length > 0
+                ) {
+                  event.preventDefault()
+                  const direction = event.key === "ArrowDown" ? 1 : -1
+                  const startIndex =
+                    currentIndex < 0 ? (direction > 0 ? -1 : 0) : currentIndex
+                  items[
+                    (startIndex + direction + items.length) % items.length
+                  ]?.focus()
+                } else if (event.key === "Home" || event.key === "End") {
+                  event.preventDefault()
+                  items[event.key === "Home" ? 0 : items.length - 1]?.focus()
+                }
+              }}
+            >
+              {navItems.map((item, index) => (
+                <button
+                  key={item.screen}
+                  role="menuitem"
+                  onClick={() => {
+                    setShowFileMenu(false)
+
+                    onNavigate(item.screen)
+                  }}
+                >
+                  <span>{item.label}</span>
+                  <kbd>Alt + {index + 1}</kbd>
+                </button>
+              ))}
+              <div role="separator" />
+              <button
+                role="menuitem"
+                onClick={() => {
+                  setShowFileMenu(false)
+
+                  onNavigate("new-message")
+                }}
+              >
+                <span>New Message</span>
+                <kbd>Alt + N</kbd>
+              </button>
+              <button
+                role="menuitem"
+                onClick={() => {
+                  setShowFileMenu(false)
+
+                  onNavigate("login")
+                }}
+              >
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
         <span>Edit</span>
         <span>View</span>
         <div className="help-menu" ref={helpMenuRef}>
@@ -377,6 +724,9 @@ export function Shell({
             aria-expanded={showHelpMenu}
             onClick={() => {
               setContextMenu(null)
+
+              setShowFileMenu(false)
+
               setShowHelpMenu((open) => !open)
             }}
           >
@@ -508,11 +858,64 @@ export function Shell({
               </section>
             )}
           </div>
-          <button className="top-icon" aria-label="Calendar">
+          <button
+            className="top-icon"
+            aria-label="Calendar"
+            aria-haspopup="dialog"
+            onClick={() => setShowCalendar(true)}
+          >
             □
           </button>
           <span className="mini-avatar">JD</span>
-          <button className="account-menu">Jane Doe　⌄</button>
+          <div className="account-menu-anchor" ref={accountMenuRef}>
+            <button
+              className="account-menu"
+              ref={accountButtonRef}
+              aria-haspopup="menu"
+              aria-expanded={showAccountMenu}
+              onClick={() => setShowAccountMenu((open) => !open)}
+            >
+              Jane Doe　⌄
+            </button>
+            {showAccountMenu && (
+              <div
+                className="account-menu-popup"
+                role="menu"
+                aria-label="Account menu"
+              >
+                <button
+                  role="menuitem"
+                  onClick={() => {
+                    setShowAccountMenu(false)
+
+                    onNavigate("profile")
+                  }}
+                >
+                  View profile
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={() => {
+                    setShowAccountMenu(false)
+
+                    onNavigate("settings")
+                  }}
+                >
+                  Account settings
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={() => {
+                    setShowAccountMenu(false)
+
+                    onNavigate("login")
+                  }}
+                >
+                  Log out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
       <aside className="sidebar">
@@ -566,18 +969,22 @@ export function Shell({
                 '[role="menuitem"]',
               ) ?? [],
             )
+
             const currentIndex = items.indexOf(
               document.activeElement as HTMLButtonElement,
             )
 
             if (event.key === "ArrowDown" || event.key === "ArrowUp") {
               event.preventDefault()
+
               const direction = event.key === "ArrowDown" ? 1 : -1
+
               items[
                 (currentIndex + direction + items.length) % items.length
               ]?.focus()
             } else if (event.key === "Home" || event.key === "End") {
               event.preventDefault()
+
               items[event.key === "Home" ? 0 : items.length - 1]?.focus()
             }
           }}
@@ -650,6 +1057,7 @@ export function Shell({
                 aria-label="Close keyboard shortcuts"
                 onClick={() => {
                   setShowShortcuts(false)
+
                   shortcutTriggerRef.current?.focus()
                 }}
               >
@@ -681,9 +1089,38 @@ export function Shell({
           </div>
         </div>
       )}
+      {showCalendar && (
+        <ModalDialog
+          title="Upcoming appointments"
+          onClose={() => setShowCalendar(false)}
+        >
+          <div className="calendar-dialog-content">
+            <p>Saturday, March 14</p>
+            <article>
+              <b>2:30 PM · Cardiology follow-up</b>
+              <span>Dr. Sarah Chen · Bay Medical Center</span>
+            </article>
+            <article>
+              <b>Friday, March 21 · 10:00 AM</b>
+              <span>Physical therapy · Michael Torres, PT</span>
+            </article>
+            <button
+              className="primary"
+              onClick={() => {
+                setShowCalendar(false)
+
+                onNavigate("appointments")
+              }}
+            >
+              View all appointments
+            </button>
+          </div>
+        </ModalDialog>
+      )}
     </div>
   )
 }
+
 function ShortcutRow({ keys, label }: ShortcutRowProps) {
   return (
     <div className="shortcut-row">
