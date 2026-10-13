@@ -1,21 +1,9 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  within,
-  act,
-} from "@testing-library/react"
 import { render, screen, fireEvent, waitFor, within, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Shell } from "./AppShell";
 import { axe, toHaveNoViolations } from "jest-axe";
 
 expect.extend(toHaveNoViolations);
-
-import userEvent from "@testing-library/user-event"
-
-import { Shell } from "./AppShell"
 
 const onNavigate = jest.fn()
 
@@ -732,29 +720,23 @@ test("handles unavailable Windows test notification", async () => {
       showTestNotification,
     }
 
+
   renderShell()
 })
 
-
 test("handles Windows test notification error", async () => {
   const showTestNotification = jest
-
     .fn()
-
     .mockRejectedValue(new Error("Notification failed"))
+
     ; (window as any).careConnectDesktop = {
       getAppInfo: jest.fn().mockResolvedValue({
         version: "2.4.1",
-
         platform: "win32",
       }),
-
       onShowShortcuts: jest.fn(),
-
       showTestNotification,
     }
 
   renderShell()
 })
-
-
