@@ -1,21 +1,9 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  within,
-  act,
-} from "@testing-library/react"
 import { render, screen, fireEvent, waitFor, within, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Shell } from "./AppShell";
 import { axe, toHaveNoViolations } from "jest-axe";
 
 expect.extend(toHaveNoViolations);
-
-import userEvent from "@testing-library/user-event"
-
-import { Shell } from "./AppShell"
 
 const onNavigate = jest.fn()
 
@@ -736,8 +724,6 @@ describe("Shell", () => {
   })
 
 
-  });
-
   test("handles Windows test notification error", async () => {
     const showTestNotification = jest
 
@@ -758,9 +744,3 @@ describe("Shell", () => {
 
     renderShell()
   })
-})
-
-
-
-  });
-});

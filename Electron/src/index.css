@@ -860,6 +860,8 @@ p {
   .login-stack { width: 100%; padding: 24px 16px; }
   .login-card { width: 100%; min-height: 0; padding: 28px 24px; }
   .auth-copyright { text-align: center; }
+}
+
 .topbar .brand-mark {
   background: white;
 }
@@ -1751,6 +1753,13 @@ p {
   border-right: 1px solid #d7dce7;
 }
 
+.provider-summary {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .provider-back {
   align-self: stretch;
   display: flex;
@@ -1788,7 +1797,7 @@ p {
   font-size: 16px;
 }
 
-.provider-panel>p {
+.provider-summary>p {
   margin-top: 5px;
   color: #666;
 }

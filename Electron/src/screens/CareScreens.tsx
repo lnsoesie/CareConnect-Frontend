@@ -24,17 +24,17 @@ export function Dashboard({
         action={<span className="all-connected">● All systems connected</span>}
       />
       <div className="metric-grid">
-        <Card>
+        <Card tabIndex={0}>
           <small>NEXT APPOINTMENT</small>
           <strong>Today, 2:30 PM</strong>
           <p>Dr. Sarah Chen · Cardiology</p>
         </Card>
-        <Card>
+        <Card tabIndex={0}>
           <small>MEDICATIONS TODAY</small>
           <strong>3 of 4 taken</strong>
           <p>Next dose at 6:00 PM</p>
         </Card>
-        <Card>
+        <Card tabIndex={0}>
           <small>CARE PLAN</small>
           <strong>82% on track</strong>
           <p>2 tasks due this week</p>
@@ -51,7 +51,7 @@ export function Dashboard({
               View all
             </button>
           </div>
-          <div className="appointment featured">
+          <div className="appointment featured" tabIndex={0}>
             <time>
               <b>14</b>
               <small>MAR</small>
@@ -63,12 +63,13 @@ export function Dashboard({
             </div>
             <button
               className="primary"
+              aria-label="View details"
               onClick={() => onNavigate("appointments")}
             >
               View details
             </button>
           </div>
-          <div className="appointment">
+          <div className="appointment" tabIndex={0}>
             <time>
               <b>21</b>
             </time>
@@ -97,7 +98,7 @@ export function Dashboard({
           ))}
         </Card>
       </div>
-      <Card className="health-card">
+      <Card className="health-card" tabIndex={0}>
         <SectionTitle icon="info">HEALTH SNAPSHOT</SectionTitle>
         <div className="health-grid">
           <span>
@@ -162,6 +163,7 @@ export function Appointments() {
   const [activeTab, setActiveTab] = useState<AppointmentStatus>("Upcoming")
   const [appointmentList, setAppointmentList] = useState(initialAppointments)
   const [showScheduleForm, setShowScheduleForm] = useState(false)
+  const [announcement, setAnnouncement] = useState("")
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
   const visibleAppointments = appointmentList.filter((appointment) =>
     activeTab === "Upcoming"
@@ -224,6 +226,7 @@ export function Appointments() {
       },
     ])
     setActiveTab("Upcoming")
+    setAnnouncement(`Appointment scheduled: ${title}.`)
     setShowScheduleForm(false)
   }
 
@@ -241,6 +244,9 @@ export function Appointments() {
           </button>
         }
       />
+      <p className="sr-only" role="status" aria-live="polite">
+        {announcement}
+      </p>
       <div
         className="tabs"
         role="tablist"
@@ -271,38 +277,44 @@ export function Appointments() {
         id="appointment-panel"
         role="tabpanel"
         aria-labelledby={`appointment-tab-${activeTab.toLowerCase()}`}
-        tabIndex={0}
       >
         <Card className="list-card">
-          {visibleAppointments.length ? (
-            visibleAppointments.map(
-              ({ date, title, provider, dateTime, status }) => (
-                <div className="list-row appointment-row" key={title}>
-                  <time>{date}</time>
-                  <div>
-                    <b>{title}</b>
-                    <p>{provider}</p>
-                  </div>
-                  <div>
-                    <b>{dateTime}</b>
-                    <p>In person</p>
-                  </div>
-                  <span
-                    className={`pill ${status === "Confirmed" ? "confirmed" : ""}`}
+          <div role="list" aria-label={`${activeTab} appointments`}>
+            {visibleAppointments.length ? (
+              visibleAppointments.map(
+                ({ date, title, provider, dateTime, status }) => (
+                  <div
+                    className="list-row appointment-row"
+                    key={title}
+                    role="listitem"
+                    tabIndex={0}
                   >
-                    {status}
-                  </span>
-                  <span className="chevron" aria-hidden="true">
-                    ›
-                  </span>
-                </div>
-              ),
-            )
-          ) : (
-            <p className="empty-state">
-              No {activeTab.toLowerCase()} appointments.
-            </p>
-          )}
+                    <time>{date}</time>
+                    <div>
+                      <b>{title}</b>
+                      <p>{provider}</p>
+                    </div>
+                    <div>
+                      <b>{dateTime}</b>
+                      <p>In person</p>
+                    </div>
+                    <span
+                      className={`pill ${status === "Confirmed" ? "confirmed" : ""}`}
+                    >
+                      {status}
+                    </span>
+                    <span className="chevron" aria-hidden="true">
+                      ›
+                    </span>
+                  </div>
+                ),
+              )
+            ) : (
+              <p className="empty-state" role="listitem" tabIndex={0}>
+                No {activeTab.toLowerCase()} appointments.
+              </p>
+            )}
+          </div>
         </Card>
       </div>
       <Card className="help-card">
@@ -378,6 +390,7 @@ export function Medications() {
   const [selectedMedication, setSelectedMedication] =
     useState<MedicationItem | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
+  const [announcement, setAnnouncement] = useState("")
 
   const addMedication = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -391,6 +404,7 @@ export function Medications() {
       ...current,
       { name, dose, schedule, status: "Added today" },
     ])
+    setAnnouncement(`Medication added: ${name}.`)
     setShowAddForm(false)
   }
 
@@ -408,18 +422,21 @@ export function Medications() {
           </button>
         }
       />
+      <p className="sr-only" role="status" aria-live="polite">
+        {announcement}
+      </p>
       <div className="metric-grid">
-        <Card>
+        <Card tabIndex={0}>
           <small>ACTIVE MEDICATIONS</small>
           <strong>{medicationList.length}</strong>
           <p>All prescriptions current</p>
         </Card>
-        <Card>
+        <Card tabIndex={0}>
           <small>TODAY'S PROGRESS</small>
           <strong>3 of 4</strong>
           <p>One dose remaining</p>
         </Card>
-        <Card>
+        <Card tabIndex={0}>
           <small>NEXT REFILL</small>
           <strong>12 days</strong>
           <p>Lisinopril · Mar 26</p>
@@ -427,30 +444,38 @@ export function Medications() {
       </div>
       <Card className="list-card medication-card">
         <SectionTitle>MY MEDICATIONS</SectionTitle>
-        {medicationList.map(({ name, dose, schedule, status }, index) => (
-          <div className="list-row medication-row" key={name}>
-            <span className="med-icon">♨</span>
-            <div>
-              <b>{name}</b>
-              <p>{dose}</p>
-            </div>
-            <div>
-              <small>SCHEDULE</small>
-              <p>{schedule}</p>
-            </div>
-            <span className={`pill med-status status-${index}`}>{status}</span>
-            <button
-              className="outline"
-              onClick={() =>
-                setSelectedMedication({ name, dose, schedule, status })
-              }
+        <div role="list" aria-label="My medications">
+          {medicationList.map(({ name, dose, schedule, status }, index) => (
+            <div
+              className="list-row medication-row"
+              key={name}
+              role="listitem"
+              tabIndex={0}
             >
-              Details
-            </button>
-          </div>
-        ))}
+              <span className="med-icon" aria-hidden="true">♨</span>
+              <div>
+                <b>{name}</b>
+                <p>{dose}</p>
+              </div>
+              <div>
+                <small>SCHEDULE</small>
+                <p>{schedule}</p>
+              </div>
+              <span className={`pill med-status status-${index}`}>{status}</span>
+              <button
+                className="outline"
+                aria-label="Details"
+                onClick={() =>
+                  setSelectedMedication({ name, dose, schedule, status })
+                }
+              >
+                Details
+              </button>
+            </div>
+          ))}
+        </div>
       </Card>
-      <div className="info-banner">
+      <div className="info-banner" tabIndex={0}>
         <Icon name="info" /> Never change or stop a medication without speaking
         to your care team.
       </div>
@@ -483,7 +508,11 @@ export function Medications() {
           title={selectedMedication.name}
           onClose={() => setSelectedMedication(null)}
         >
-          <div className="action-form medication-details">
+          <div
+            className="action-form medication-details"
+            tabIndex={0}
+            aria-label={`${selectedMedication.name}. Dose: ${selectedMedication.dose}. Schedule: ${selectedMedication.schedule}. Status: ${selectedMedication.status}. Never change or stop a medication without speaking to your care team.`}
+          >
             <p>
               <b>Dose</b>
               <span>{selectedMedication.dose}</span>
@@ -535,24 +564,32 @@ export function Messages({
         }
       />
       <Card className="list-card messages-card">
-        {messages.map(([day, time, subject, sender]) => (
-          <div className="list-row message-row" key={subject}>
-            <time>
-              <b>{day}</b>
-              <b>{time}</b>
-            </time>
-            <div>
-              <b>{subject}</b>
-              <p>{sender}</p>
-            </div>
-            <button
-              className="outline"
-              onClick={() => onNavigate("conversation")}
+        <div role="list" aria-label="Messages">
+          {messages.map(([day, time, subject, sender]) => (
+            <div
+              className="list-row message-row"
+              key={subject}
+              role="listitem"
+              tabIndex={0}
             >
-              Details
-            </button>
-          </div>
-        ))}
+              <time>
+                <b>{day}</b>
+                <b>{time}</b>
+              </time>
+              <div>
+                <b>{subject}</b>
+                <p>{sender}</p>
+              </div>
+              <button
+                className="outline"
+                aria-label="Details"
+                onClick={() => onNavigate("conversation")}
+              >
+                Details
+              </button>
+            </div>
+          ))}
+        </div>
       </Card>
     </>
   )
@@ -627,22 +664,29 @@ export function Conversation({
         >
           ‹ <span>Back to Messages</span>
         </button>
-        <span className="provider-avatar">SS</span>
-        <h2>Dr. Sarah Smith</h2>
-        <p>Neurology</p>
-        <span className="reply-time">●　Usually replies in 1–2 days</span>
-        <div className="visit-card">
-          <b>▣　Upcoming visit</b>
-          <p>
-            September 5 · 10:00 AM
-            <br />
-            Neurology follow-up
+        <div
+          className="provider-summary"
+          role="group"
+          aria-label="Provider information"
+          tabIndex={0}
+        >
+          <span className="provider-avatar">SS</span>
+          <h2>Dr. Sarah Smith</h2>
+          <p>Neurology</p>
+          <span className="reply-time">●　Usually replies in 1–2 days</span>
+          <div className="visit-card">
+            <b>▣　Upcoming visit</b>
+            <p>
+              September 5 · 10:00 AM
+              <br />
+              Neurology follow-up
+            </p>
+          </div>
+          <p className="privacy">
+            ♢　This conversation is private and protected as part of your health
+            record.
           </p>
         </div>
-        <p className="privacy">
-          ♢　This conversation is private and protected as part of your health
-          record.
-        </p>
       </aside>
       <section className="chat">
         <header>
@@ -652,39 +696,64 @@ export function Conversation({
           </div>
           <span>▣　Secure message</span>
         </header>
-        <div className="chat-body">
+        <div
+          className="chat-body"
+          role="log"
+          aria-live="polite"
+          aria-label="Conversation with Dr. Sarah Smith"
+        >
           <span className="today">Today</span>
-          <div className="bubble received">
+          <div
+            className="bubble received"
+            role="group"
+            aria-label="Message from Dr. Sarah Smith at 10:42 AM: Your test results are ready, please let me know if you have any questions."
+            tabIndex={0}
+          >
             Your test results are ready, please let me know if you have any
             questions.
           </div>
           <time>10:42 AM</time>
-          <div className="bubble sent">
+          <div
+            className="bubble sent"
+            role="group"
+            aria-label="Message from you at 10:45 AM: Thank you, Dr. Smith. I have a question but prefer to discuss it during the upcoming visit."
+            tabIndex={0}
+          >
             Thank you, Dr. Smith. I have a question but prefer to discuss it
             during the upcoming visit.
           </div>
           <time className="sent-time">10:45 AM</time>
           {replies.map((reply) => (
-            <div className="bubble sent" key={reply}>
+            <div
+              className="bubble sent"
+              key={reply}
+              role="group"
+              aria-label={`Message from you: ${reply}`}
+              tabIndex={0}
+            >
               {reply}
             </div>
           ))}
         </div>
-        <div className="chat-input">
-          <span>⌕</span>
+        <form
+          className="chat-input"
+          aria-label="Reply to Dr. Sarah Smith"
+          onSubmit={(event) => {
+            event.preventDefault()
+            send()
+          }}
+        >
+          <span aria-hidden="true">⌕</span>
           <input
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             placeholder="Type a message..."
             aria-label="Type a message"
-            onKeyDown={(event) => {
-              if (event.key === "Enter") send()
-            }}
           />
-          <button aria-label="Send message" onClick={send}>
+          <button type="submit" aria-label="Send message">
             ▷
           </button>
-        </div>
+        </form>
       </section>
     </div>
   )
@@ -705,6 +774,7 @@ const initialProfile: ProfileDetails = {
 export function Profile() {
   const [profile, setProfile] = useState(initialProfile)
   const [editing, setEditing] = useState(false)
+  const [announcement, setAnnouncement] = useState("")
 
   const saveProfile = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -714,6 +784,7 @@ export function Profile() {
     const phone = String(formData.get("phone") ?? "").trim()
     if (!name || !email || !phone) return
     setProfile({ name, email, phone })
+    setAnnouncement("Profile saved.")
     setEditing(false)
   }
 
@@ -728,8 +799,11 @@ export function Profile() {
           </button>
         }
       />
+      <p className="sr-only" role="status" aria-live="polite">
+        {announcement}
+      </p>
       <div className="profile-grid">
-        <Card className="identity-card">
+        <Card className="identity-card" tabIndex={0}>
           <span className="profile-avatar">JD</span>
           <h2>{profile.name}</h2>
           <p>Patient</p>
@@ -740,7 +814,7 @@ export function Profile() {
           <span>{profile.phone}</span>
           <b className="active-account">●　Active Account</b>
         </Card>
-        <Card className="personal-card">
+        <Card className="personal-card" tabIndex={0}>
           <SectionTitle icon="user">PERSONAL INFORMATION</SectionTitle>
           <div className="detail-grid">
             <Detail label="FULL NAME" value={profile.name} />
@@ -749,7 +823,7 @@ export function Profile() {
             <Detail label="PHONE NUMBER" value={profile.phone} />
           </div>
         </Card>
-        <Card className="address-card">
+        <Card className="address-card" tabIndex={0}>
           <SectionTitle icon="info">ADDRESS</SectionTitle>
           <div className="detail-grid address">
             <Detail label="STREET ADDRESS" value="4821 Willowbrook Drive" />
@@ -758,7 +832,7 @@ export function Profile() {
             <Detail label="ZIP CODE" value="94102" />
           </div>
         </Card>
-        <Card className="emergency-card">
+        <Card className="emergency-card" tabIndex={0}>
           <SectionTitle icon="info">EMERGENCY CONTACT</SectionTitle>
           <div className="detail-grid">
             <Detail label="CONTACT NAME" value="Robert Doe" />
