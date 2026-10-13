@@ -90,6 +90,17 @@ const navItems: NavItem[] = [
   { screen: "settings", icon: "settings", label: "Settings" },
 ]
 
+const screenTitles: Record<Exclude<Screen, "login" | "recovery">, string> = {
+  dashboard: "Home",
+  appointments: "Appointments",
+  messages: "Messages",
+  medications: "Medications",
+  "new-message": "New message",
+  conversation: "Conversation with Dr. Sarah Smith",
+  profile: "Profile",
+  settings: "Settings",
+}
+
 export function Shell({
   screen,
 
@@ -620,17 +631,23 @@ export function Shell({
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
-      <div
-        className="desktop-menu"
-        role="menubar"
-        aria-label="CareConnect menus"
+      <p
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
       >
+        {screenTitles[screen as Exclude<Screen, "login" | "recovery">]} page
+        loaded
+      </p>
+      <nav className="desktop-menu" aria-label="Application menus">
         <div className="file-menu" ref={fileMenuRef}>
           <button
             className="desktop-menu-button"
             ref={fileButtonRef}
             aria-haspopup="menu"
             aria-expanded={showFileMenu}
+            aria-controls={showFileMenu ? "file-menu" : undefined}
             onClick={() => {
               setShowHelpMenu(false)
 
@@ -642,6 +659,7 @@ export function Shell({
           {showFileMenu && (
             <div
               className="help-menu-popup"
+              id="file-menu"
               role="menu"
               aria-label="File menu"
               onKeyDown={(event) => {
@@ -714,14 +732,15 @@ export function Shell({
             </div>
           )}
         </div>
-        <span>Edit</span>
-        <span>View</span>
+        <span aria-hidden="true">Edit</span>
+        <span aria-hidden="true">View</span>
         <div className="help-menu" ref={helpMenuRef}>
           <button
             className="desktop-menu-button"
             ref={helpButtonRef}
             aria-haspopup="menu"
             aria-expanded={showHelpMenu}
+            aria-controls={showHelpMenu ? "help-menu" : undefined}
             onClick={() => {
               setContextMenu(null)
 
@@ -733,7 +752,12 @@ export function Shell({
             Help
           </button>
           {showHelpMenu && (
-            <div className="help-menu-popup" role="menu" aria-label="Help menu">
+            <div
+              className="help-menu-popup"
+              id="help-menu"
+              role="menu"
+              aria-label="Help menu"
+            >
               <button
                 role="menuitem"
                 onClick={(event) =>
@@ -746,13 +770,13 @@ export function Shell({
                 <kbd>Ctrl + /</kbd>
               </button>
               <div role="separator" />
-              <p>
+              <p role="presentation">
                 Press <kbd>?</kbd> anytime to open the shortcut guide.
               </p>
             </div>
           )}
         </div>
-      </div>
+      </nav>
       <header className="topbar">
         <Brand compact variant="shell" />
         <div className="top-actions">
@@ -784,7 +808,7 @@ export function Shell({
                 role="dialog"
                 aria-labelledby="notifications-title"
               >
-                <header className="notifications-header">
+                <header className="notifications-header" role="presentation">
                   <div>
                     <h2 id="notifications-title">Notifications</h2>
                     <span>{unreadNotificationCount} unread</span>
@@ -810,6 +834,7 @@ export function Shell({
                           notification.unread ? " unread" : ""
                         }`}
                         key={notification.id}
+                        aria-label={`${notification.unread ? "Unread notification: " : ""}${notification.title}. ${notification.description} ${notification.time}`}
                         onClick={() => openNotification(notification)}
                       >
                         <span
@@ -827,7 +852,7 @@ export function Shell({
                 ) : (
                   <p className="notifications-empty">You're all caught up.</p>
                 )}
-                <footer className="notifications-footer">
+                <footer className="notifications-footer" role="presentation">
                   {desktopPlatform === "win32" ? (
                     <button
                       className="notification-test"
@@ -919,13 +944,18 @@ export function Shell({
         </div>
       </header>
       <aside className="sidebar">
-        <nav>
+        <nav aria-label="Primary navigation">
           {navItems.map((item) => (
             <button
               key={item.screen}
               className={activeScreen === item.screen ? "active" : ""}
               onClick={() => onNavigate(item.screen)}
               aria-current={activeScreen === item.screen ? "page" : undefined}
+              aria-label={
+                item.screen === "messages"
+                  ? `${item.label}, 2 unread`
+                  : item.label
+              }
             >
               <Icon name={item.icon} />
               <span>{item.label}</span>
@@ -989,7 +1019,7 @@ export function Shell({
             }
           }}
         >
-          <p>QUICK ACTIONS</p>
+          <p role="presentation">QUICK ACTIONS</p>
           <button
             role="menuitem"
             onClick={() => chooseContextAction("dashboard")}
@@ -1047,7 +1077,7 @@ export function Shell({
             aria-modal="true"
             aria-labelledby="shortcut-dialog-title"
           >
-            <header>
+            <header role="presentation">
               <div>
                 <h2 id="shortcut-dialog-title">Keyboard shortcuts</h2>
                 <p>Navigate CareConnect without leaving the keyboard.</p>
@@ -1065,7 +1095,7 @@ export function Shell({
               </button>
             </header>
             <div className="shortcut-groups">
-              <section>
+              <section tabIndex={0}>
                 <h3>Navigation</h3>
                 <ShortcutRow keys={["Alt", "1"]} label="Home" />
                 <ShortcutRow keys={["Alt", "2"]} label="Appointments" />
@@ -1074,7 +1104,7 @@ export function Shell({
                 <ShortcutRow keys={["Alt", "5"]} label="Profile" />
                 <ShortcutRow keys={["Alt", "6"]} label="Settings" />
               </section>
-              <section>
+              <section tabIndex={0}>
                 <h3>Actions</h3>
                 <ShortcutRow keys={["Alt", "N"]} label="New message" />
                 <ShortcutRow keys={["Ctrl", "K"]} label="Focus search" />
@@ -1096,11 +1126,17 @@ export function Shell({
         >
           <div className="calendar-dialog-content">
             <p>Saturday, March 14</p>
-            <article>
+            <article
+              tabIndex={0}
+              aria-label="Saturday, March 14 at 2:30 PM. Cardiology follow-up with Dr. Sarah Chen at Bay Medical Center."
+            >
               <b>2:30 PM · Cardiology follow-up</b>
               <span>Dr. Sarah Chen · Bay Medical Center</span>
             </article>
-            <article>
+            <article
+              tabIndex={0}
+              aria-label="Friday, March 21 at 10:00 AM. Physical therapy with Michael Torres, physical therapist."
+            >
               <b>Friday, March 21 · 10:00 AM</b>
               <span>Physical therapy · Michael Torres, PT</span>
             </article>

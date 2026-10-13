@@ -1,4 +1,10 @@
-import { useId, useLayoutEffect, useRef, type ReactNode } from "react"
+import {
+  useId,
+  useLayoutEffect,
+  useRef,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react"
 import type { IconName } from "../types"
 
 interface IconProps {
@@ -82,11 +88,16 @@ export function PageHeading({
 export function Card({
   children,
   className = "",
+  ...sectionProps
 }: {
   children: ReactNode
   className?: string
-}) {
-  return <section className={`card ${className}`}>{children}</section>
+} & Omit<HTMLAttributes<HTMLElement>, "className">) {
+  return (
+    <section className={`card ${className}`} {...sectionProps}>
+      {children}
+    </section>
+  )
 }
 export function SectionTitle({
   icon,
@@ -178,7 +189,7 @@ export function ModalDialog({
           }
         }}
       >
-        <header>
+        <header role="presentation">
           <div>
             <h2 id={titleId}>{title}</h2>
           </div>
