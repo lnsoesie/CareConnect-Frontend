@@ -620,9 +620,8 @@ export function Shell({
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
-      <div
+      <nav
         className="desktop-menu"
-        role="menubar"
         aria-label="CareConnect menus"
       >
         <div className="file-menu" ref={fileMenuRef}>
@@ -752,7 +751,7 @@ export function Shell({
             </div>
           )}
         </div>
-      </div>
+      </nav>
       <header className="topbar">
         <Brand compact variant="shell" />
         <div className="top-actions">
@@ -806,9 +805,8 @@ export function Shell({
                   <div className="notifications-list">
                     {notifications.map((notification) => (
                       <button
-                        className={`notification-item${
-                          notification.unread ? " unread" : ""
-                        }`}
+                        className={`notification-item${notification.unread ? " unread" : ""
+                          }`}
                         key={notification.id}
                         onClick={() => openNotification(notification)}
                       >
@@ -952,7 +950,7 @@ export function Shell({
           {desktopVersion
             ? `CareConnect Desktop v${desktopVersion}`
             : "CareConnect v2.4.1"}
-          　　HIPAA Compliant　　© 2026 CareConnect Health
+          HIPAA Compliant　　© 2026 CareConnect Health
         </span>
       </footer>
       {contextMenu && (

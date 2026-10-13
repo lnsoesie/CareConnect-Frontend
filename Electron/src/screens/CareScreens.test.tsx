@@ -1,5 +1,6 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import {
   Dashboard,
   Appointments,
@@ -170,14 +171,16 @@ describe("CareScreens", () => {
       expect(
         screen.queryByRole("dialog", { name: "Schedule appointment" }),
       ).not.toBeInTheDocument();
-      expect(trigger).toHaveFocus();
+      await waitFor(() => {
+        expect(trigger).toHaveFocus()
+      })
     });
 
     test("renders scheduling help", () => {
-    render(<Appointments />);
+      render(<Appointments />);
 
-    expect(screen.getByText(/Need help/i)).toBeInTheDocument();
-    expect(screen.getByText(/\(555\) 018-2200/)).toBeInTheDocument();
+      expect(screen.getByText(/Need help/i)).toBeInTheDocument();
+      expect(screen.getByText(/\(555\) 018-2200/)).toBeInTheDocument();
     });
   });
 
@@ -319,22 +322,22 @@ describe("CareScreens", () => {
 
   describe("Conversation", () => {
     // Conversation
-test("renders conversation", () => {
-  render(<Conversation onNavigate={onNavigate} />);
+    test("renders conversation", () => {
+      render(<Conversation onNavigate={onNavigate} />);
 
-  expect(
-    screen.getByRole("heading", {
-      level: 1,
-      name: "Dr. Sarah Smith",
-    })
-  ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", {
+          level: 1,
+          name: "Dr. Sarah Smith",
+        })
+      ).toBeInTheDocument();
 
-  //expect(screen.getByText("Neurology")).toBeInTheDocument();
-  expect(
-    screen.getByText(/Your test results are ready/)
-  ).toBeInTheDocument();
-  expect(screen.getByLabelText("Type a message")).toBeInTheDocument();
-});
+      //expect(screen.getByText("Neurology")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Your test results are ready/)
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText("Type a message")).toBeInTheDocument();
+    });
 
     test("back to messages navigates correctly", async () => {
       const user = userEvent.setup();
@@ -388,23 +391,23 @@ test("renders conversation", () => {
       );
 
       expect(
-  screen.getByText(/Your test results are ready/)
-).toBeInTheDocument();
+        screen.getByText(/Your test results are ready/)
+      ).toBeInTheDocument();
     });
   });
 
   describe("Profile", () => {
     test("renders profile information", () => {
-  render(<Profile />);
+      render(<Profile />);
 
-  expect(
-    screen.getByRole("heading", { name: "Profile" })
-  ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Profile" })
+      ).toBeInTheDocument();
 
- //expect(screen.getByText("jane.doe@example.com")).toBeInTheDocument();
-  expect(screen.getByText("4821 Willowbrook Drive")).toBeInTheDocument();
-  expect(screen.getByText("San Francisco")).toBeInTheDocument();
-});
+      //expect(screen.getByText("jane.doe@example.com")).toBeInTheDocument();
+      expect(screen.getByText("4821 Willowbrook Drive")).toBeInTheDocument();
+      expect(screen.getByText("San Francisco")).toBeInTheDocument();
+    });
 
     test("renders Edit Profile action", () => {
       render(<Profile />);

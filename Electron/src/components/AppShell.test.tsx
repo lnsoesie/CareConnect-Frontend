@@ -580,7 +580,7 @@ describe("Shell", () => {
   })
 
   test("loads Electron app information", async () => {
-    ;(window as any).careConnectDesktop = {
+    ; (window as any).careConnectDesktop = {
       getAppInfo: jest.fn().mockResolvedValue({
         version: "3.0.0",
 
@@ -595,29 +595,29 @@ describe("Shell", () => {
     renderShell()
   })
 
-  });
+});
 
-  test("handles Electron app info failure", async () => {
-    ;(window as any).careConnectDesktop = {
-      getAppInfo: jest.fn().mockRejectedValue(new Error("Failed")),
+test("handles Electron app info failure", async () => {
+  ; (window as any).careConnectDesktop = {
+    getAppInfo: jest.fn().mockRejectedValue(new Error("Failed")),
 
-      onShowShortcuts: jest.fn(),
+    onShowShortcuts: jest.fn(),
 
-      showTestNotification: jest.fn(),
-    }
+    showTestNotification: jest.fn(),
+  }
 
-    renderShell()
+  renderShell()
 
-    await waitFor(() => {
-      expect((window as any).careConnectDesktop.getAppInfo).toHaveBeenCalled()
-    })
-
-    expect(screen.getByText(/CareConnect v2.4.1/i)).toBeInTheDocument()
+  await waitFor(() => {
+    expect((window as any).careConnectDesktop.getAppInfo).toHaveBeenCalled()
   })
 
-  test("opens shortcut dialog from Electron event", async () => {
-    let shortcutHandler: (() => void) | undefined
-    ;(window as any).careConnectDesktop = {
+  expect(screen.getByText(/CareConnect v2.4.1/i)).toBeInTheDocument()
+})
+
+test("opens shortcut dialog from Electron event", async () => {
+  let shortcutHandler: (() => void) | undefined
+    ; (window as any).careConnectDesktop = {
       getAppInfo: jest.fn().mockResolvedValue({
         version: "2.4.1",
 
@@ -631,26 +631,26 @@ describe("Shell", () => {
       showTestNotification: jest.fn(),
     }
 
-    renderShell()
+  renderShell()
 
-    await waitFor(() => {
-      expect(shortcutHandler).toBeDefined()
-    })
-
-    act(() => {
-      shortcutHandler?.()
-    })
-
-    expect(
-      await screen.findByRole("dialog", {
-        name: /Keyboard shortcuts/i,
-      }),
-    ).toBeInTheDocument()
+  await waitFor(() => {
+    expect(shortcutHandler).toBeDefined()
   })
 
-  test("opens the File menu from the native Electron Alt+F event", async () => {
-    let fileMenuHandler: (() => void) | undefined
-    ;(window as any).careConnectDesktop = {
+  act(() => {
+    shortcutHandler?.()
+  })
+
+  expect(
+    await screen.findByRole("dialog", {
+      name: /Keyboard shortcuts/i,
+    }),
+  ).toBeInTheDocument()
+})
+
+test("opens the File menu from the native Electron Alt+F event", async () => {
+  let fileMenuHandler: (() => void) | undefined
+    ; (window as any).careConnectDesktop = {
       getAppInfo: jest.fn().mockResolvedValue({
         version: "2.4.1",
         platform: "win32",
@@ -662,24 +662,24 @@ describe("Shell", () => {
       showTestNotification: jest.fn(),
     }
 
-    renderShell()
+  renderShell()
 
-    await waitFor(() => {
-      expect(fileMenuHandler).toBeDefined()
-    })
-
-    act(() => {
-      fileMenuHandler?.()
-    })
-
-    const menu = screen.getByRole("menu", { name: "File menu" })
-    expect(menu).toBeInTheDocument()
-    expect(within(menu).getByRole("menuitem", { name: /Home/ })).toHaveFocus()
+  await waitFor(() => {
+    expect(fileMenuHandler).toBeDefined()
   })
 
-  test("sends a Windows test notification successfully", async () => {
-    const showTestNotification = jest.fn().mockResolvedValue({ shown: true })
-    ;(window as any).careConnectDesktop = {
+  act(() => {
+    fileMenuHandler?.()
+  })
+
+  const menu = screen.getByRole("menu", { name: "File menu" })
+  expect(menu).toBeInTheDocument()
+  expect(within(menu).getByRole("menuitem", { name: /Home/ })).toHaveFocus()
+})
+
+test("sends a Windows test notification successfully", async () => {
+  const showTestNotification = jest.fn().mockResolvedValue({ shown: true })
+    ; (window as any).careConnectDesktop = {
       getAppInfo: jest.fn().mockResolvedValue({
         version: "2.4.1",
 
@@ -691,36 +691,36 @@ describe("Shell", () => {
       showTestNotification,
     }
 
-    renderShell()
+  renderShell()
 
-    await waitFor(() => {
-      expect(screen.getByText(/CareConnect v2.4.1/i)).toBeInTheDocument()
-    })
-
-    const user = userEvent.setup()
-
-    await user.click(
-      screen.getByRole("button", {
-        name: /Notifications, 3 unread/i,
-      }),
-    )
-
-    const testButton = await screen.findByRole("button", {
-      name: "Send test Windows notification",
-    })
-
-    await user.click(testButton)
-
-    expect(showTestNotification).toHaveBeenCalled()
-
-    expect(await screen.findByText("Test notification")).toBeInTheDocument()
-
-    //expect(screen.getByText(/Notification sent/i)).toBeInTheDocument();
+  await waitFor(() => {
+    expect(screen.getByText(/CareConnect v2.4.1/i)).toBeInTheDocument()
   })
 
-  test("handles unavailable Windows test notification", async () => {
-    const showTestNotification = jest.fn().mockResolvedValue({ shown: false })
-    ;(window as any).careConnectDesktop = {
+  const user = userEvent.setup()
+
+  await user.click(
+    screen.getByRole("button", {
+      name: /Notifications, 3 unread/i,
+    }),
+  )
+
+  const testButton = await screen.findByRole("button", {
+    name: "Send test Windows notification",
+  })
+
+  await user.click(testButton)
+
+  expect(showTestNotification).toHaveBeenCalled()
+
+  expect(await screen.findByText("Test notification")).toBeInTheDocument()
+
+  //expect(screen.getByText(/Notification sent/i)).toBeInTheDocument();
+})
+
+test("handles unavailable Windows test notification", async () => {
+  const showTestNotification = jest.fn().mockResolvedValue({ shown: false })
+    ; (window as any).careConnectDesktop = {
       getAppInfo: jest.fn().mockResolvedValue({
         version: "2.4.1",
 
@@ -732,35 +732,29 @@ describe("Shell", () => {
       showTestNotification,
     }
 
-    renderShell()
-  })
-
-
-  });
-
-  test("handles Windows test notification error", async () => {
-    const showTestNotification = jest
-
-      .fn()
-
-      .mockRejectedValue(new Error("Notification failed"))
-    ;(window as any).careConnectDesktop = {
-      getAppInfo: jest.fn().mockResolvedValue({
-        version: "2.4.1",
-
-        platform: "win32",
-      }),
-
-      onShowShortcuts: jest.fn(),
-
-      showTestNotification,
-    }
-
-    renderShell()
-  })
+  renderShell()
 })
 
 
+test("handles Windows test notification error", async () => {
+  const showTestNotification = jest
 
-  });
-});
+    .fn()
+
+    .mockRejectedValue(new Error("Notification failed"))
+    ; (window as any).careConnectDesktop = {
+      getAppInfo: jest.fn().mockResolvedValue({
+        version: "2.4.1",
+
+        platform: "win32",
+      }),
+
+      onShowShortcuts: jest.fn(),
+
+      showTestNotification,
+    }
+
+  renderShell()
+})
+
+
