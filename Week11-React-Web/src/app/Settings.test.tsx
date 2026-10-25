@@ -71,4 +71,44 @@ describe("CareConnect Settings", () => {
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
   })
+
+  test("closes the Change Password dialog after valid form submission", () => {
+    renderSettings()
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Change password" })
+    )
+
+    fireEvent.change(screen.getByPlaceholderText("Enter current password"), {
+      target: { value: "current123" },
+    })
+    fireEvent.change(screen.getByPlaceholderText("Enter new password"), {
+      target: { value: "newpassword123" },
+    })
+    fireEvent.change(screen.getByPlaceholderText("Re-enter new password"), {
+      target: { value: "newpassword123" },
+    })
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Update password" })
+    )
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+  })
+
+
+  test("closes the Change Password dialog when Escape is pressed", () => {
+    renderSettings()
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Change password" })
+    )
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument()
+
+    fireEvent.keyDown(document, { key: "Escape" })
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+  })
+
 })

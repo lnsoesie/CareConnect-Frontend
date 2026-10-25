@@ -1,7 +1,12 @@
 import { render, screen, fireEvent } from "@testing-library/react"
-import { MemoryRouter } from "react-router"
+import { MemoryRouter, Routes, Route, useLocation } from "react-router"
 import { ConversationRoute } from "./screens"
 import { PortalProvider } from "./store"
+
+function CurrentPath() {
+  const location = useLocation()
+  return <div data-testid="current-path">{location.pathname}</div>
+}
 
 describe("CareConnect Conversation", () => {
   beforeEach(() => {
@@ -52,5 +57,49 @@ describe("CareConnect Conversation", () => {
     ).toBeInTheDocument()
 
     expect(messageInput).toHaveValue("")
+  })
+
+  test("does not send an empty or whitespace-only message", () => {
+    renderConversation()
+
+    const messageInput = screen.getByPlaceholderText("Type a message...")
+    const initialMessages = screen.getAllByText(
+      /Your test results are ready|Thank you, Dr. Smith/i
+    )
+
+    fireEvent.change(messageInput, {
+      target: { value: "   " },
+    })
+
+    fireEvent.submit(messageInput.closest("form")!)
+
+    expect(messageInput).toHaveValue("   ")
+    expect(
+      screen.getAllByText(
+        /Your test results are ready|Thank you, Dr. Smith/i
+      )
+    ).toHaveLength(initialMessages.length)
+  })
+
+  test("returns to Messages when the back button is clicked", () => {
+    render(
+      <MemoryRouter initialEntries={["/messages/dr-sarah-smith"]}>
+        <PortalProvider>
+          <Routes>
+            <Route
+              path="/messages/dr-sarah-smith"
+              element={<ConversationRoute />}
+            />
+            <Route path="/messages" element={<CurrentPath />} />
+          </Routes>
+        </PortalProvider>
+      </MemoryRouter>
+    )
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /Back to Messages/i })
+    )
+
+    expect(screen.getByTestId("current-path")).toHaveTextContent("/messages")
   })
 })

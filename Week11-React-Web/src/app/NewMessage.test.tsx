@@ -70,4 +70,41 @@ describe("CareConnect New Message", () => {
     ).not.toBeInTheDocument()
   })
 
+
+  test("validates a message that is shorter than 10 characters", () => {
+    render(
+      <MemoryRouter initialEntries={["/messages/new"]}>
+        <PortalProvider>
+          <NewMessageRoute />
+        </PortalProvider>
+      </MemoryRouter>
+    )
+
+    fireEvent.change(
+      screen.getByPlaceholderText("Enter provider name"),
+      { target: { value: "Dr. Smith" } }
+    )
+
+    fireEvent.change(
+      screen.getByPlaceholderText("Type your message here"),
+      { target: { value: "Hi" } }
+    )
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /Send Message/i })
+    )
+
+    expect(
+      screen.getByText("Message must be at least 10 characters.")
+    ).toBeInTheDocument()
+
+    expect(
+      screen.queryByText("Enter a provider name.")
+    ).not.toBeInTheDocument()
+
+    expect(
+      screen.queryByText("Your secure message was sent.")
+    ).not.toBeInTheDocument()
+  })
+
 })
