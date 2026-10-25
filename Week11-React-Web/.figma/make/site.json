@@ -1,0 +1,11 @@
+{
+  "title": "CareConnect Patient Portal",
+  "description": "Manage appointments, medications, secure messages, and profile settings in CareConnect.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

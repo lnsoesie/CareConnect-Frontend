@@ -1,0 +1,311 @@
+:root {
+  --web-font-sans: "Arimo:Regular", Arial, sans-serif;
+  --web-font-sans-bold: "Arimo:Bold", Arial, sans-serif;
+  --web-type-display: clamp(1.75rem, 2vw, 2.25rem);
+  --web-type-heading: clamp(1.375rem, 1.6vw, 1.75rem);
+  --web-type-title: 1.125rem;
+  --web-type-body: 0.875rem;
+  --web-type-label: 0.8125rem;
+  --web-type-caption: 0.75rem;
+  --web-focus-ring: 0 0 0 3px rgba(21, 101, 192, 0.22);
+  --web-overlay: rgba(9, 20, 48, 0.5);
+  --web-elevation-menu: 0 10px 30px rgba(13, 32, 64, 0.18);
+}
+
+.web-type {
+  margin: 0;
+  color: inherit;
+  font-family: var(--web-font-sans);
+}
+
+.web-type--display {
+  font-family: var(--web-font-sans-bold);
+  font-size: var(--web-type-display);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.web-type--heading {
+  font-family: var(--web-font-sans-bold);
+  font-size: var(--web-type-heading);
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+}
+
+.web-type--title {
+  font-family: var(--web-font-sans-bold);
+  font-size: var(--web-type-title);
+  line-height: 1.35;
+}
+
+.web-type--body {
+  font-size: var(--web-type-body);
+  line-height: 1.5;
+}
+
+.web-type--label {
+  font-family: var(--web-font-sans-bold);
+  font-size: var(--web-type-label);
+  line-height: 1.4;
+}
+
+.web-type--caption {
+  font-size: var(--web-type-caption);
+  line-height: 1.4;
+}
+
+.field select {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 38px 0 14px;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 18px)
+      calc(50% - 2px) / 5px 5px no-repeat,
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 13px)
+      calc(50% - 2px) / 5px 5px no-repeat,
+    var(--surface);
+  color: var(--ink);
+  outline: none;
+}
+
+.field select:focus,
+.field input:focus-visible,
+.field textarea:focus-visible,
+.button:focus-visible,
+.web-tabs button:focus-visible,
+.web-dropdown button:focus-visible {
+  box-shadow: var(--web-focus-ring);
+  outline: none;
+}
+
+.field-hint {
+  color: var(--muted);
+  font-size: var(--web-type-caption);
+  font-weight: 400;
+}
+
+.web-tabs {
+  display: flex;
+  gap: 6px;
+  margin: -8px 0 12px;
+}
+
+.web-tabs button {
+  min-height: 36px;
+  border: 0;
+  border-radius: 18px;
+  padding: 7px 14px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.web-tabs button.active {
+  background: var(--blue-100);
+  color: var(--blue-700);
+  font-family: var(--web-font-sans-bold);
+}
+
+.web-tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.web-tooltip__bubble {
+  position: absolute;
+  z-index: 40;
+  right: 50%;
+  bottom: calc(100% + 8px);
+  width: max-content;
+  max-width: 220px;
+  transform: translateX(50%) translateY(4px);
+  border-radius: 5px;
+  padding: 6px 9px;
+  visibility: hidden;
+  opacity: 0;
+  background: #172033;
+  color: white;
+  font-size: var(--web-type-caption);
+  pointer-events: none;
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease;
+}
+
+.web-tooltip:hover .web-tooltip__bubble,
+.web-tooltip:focus-within .web-tooltip__bubble {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(50%) translateY(0);
+}
+
+.web-dropdown {
+  position: relative;
+}
+
+.web-dropdown__menu {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 8px);
+  min-width: 180px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px;
+  background: var(--surface);
+  box-shadow: var(--web-elevation-menu);
+}
+
+.web-dropdown__menu--end {
+  right: 0;
+}
+
+.web-dropdown__menu--start {
+  left: 0;
+}
+
+.web-dropdown__menu button {
+  width: 100%;
+  min-height: 38px;
+  border: 0;
+  border-radius: 5px;
+  padding: 8px 11px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+
+.web-dropdown__menu button:hover {
+  background: var(--canvas);
+}
+
+.web-dropdown__menu button.danger {
+  color: var(--danger);
+}
+
+.web-modal {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.web-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: var(--web-overlay);
+  cursor: default;
+}
+
+.web-modal__panel {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: min(720px, calc(100dvh - 48px));
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 24px 70px rgba(13, 32, 64, 0.28);
+}
+
+.web-modal__header,
+.web-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+}
+
+.web-modal__header {
+  border-bottom: 1px solid var(--line);
+}
+
+.web-modal__header .web-type--body {
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.web-modal__body {
+  padding: 20px;
+}
+
+.web-modal__footer {
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+}
+
+.web-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.web-grid__column--3 {
+  grid-column: span 3;
+}
+.web-grid__column--4 {
+  grid-column: span 4;
+}
+.web-grid__column--6 {
+  grid-column: span 6;
+}
+.web-grid__column--8 {
+  grid-column: span 8;
+}
+.web-grid__column--9 {
+  grid-column: span 9;
+}
+.web-grid__column--12 {
+  grid-column: span 12;
+}
+
+@media (max-width: 900px) {
+  .web-grid__column--tablet-4 {
+    grid-column: span 4;
+  }
+  .web-grid__column--tablet-6 {
+    grid-column: span 6;
+  }
+  .web-grid__column--tablet-8 {
+    grid-column: span 8;
+  }
+  .web-grid__column--tablet-12 {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 560px) {
+  .web-grid {
+    gap: 12px;
+  }
+  .web-grid__column--mobile-6 {
+    grid-column: span 6;
+  }
+  .web-grid__column--mobile-12 {
+    grid-column: span 12;
+  }
+  .web-modal {
+    place-items: end center;
+    padding: 0;
+  }
+  .web-modal__panel {
+    width: 100%;
+    max-height: calc(100dvh - 32px);
+    border-radius: 14px 14px 0 0;
+  }
+  .web-tabs {
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .web-tabs button {
+    min-height: 44px;
+    white-space: nowrap;
+  }
+}
