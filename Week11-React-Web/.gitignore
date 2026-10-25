@@ -20,3 +20,8 @@ logs/
 /.plugins/
 /.opencode-skills/
 !.env.example
+
+# Generated testing files
+coverage/
+playwright-report/
+test-results/
