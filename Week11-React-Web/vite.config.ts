@@ -36,12 +36,12 @@ react(),
       scope: '/',
       icons: [
         {
-          src: '/pwa-192.png',
+          src: '/icon-192.png',
           sizes: '192x192',
           type: 'image/png',
         },
         {
-          src: '/pwa-512.png',
+          src: '/icon-512.png',
           sizes: '512x512',
           type: 'image/png',
         },
@@ -129,7 +129,7 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
   const headEnd = config.customScripts?.headEnd ?? ''
   const bodyStart = config.customScripts?.bodyStart ?? ''
   const bodyEnd = config.customScripts?.bodyEnd ?? ''
-  const robotsTxt = config.robots?.index === false ? 'User-agent: *\nDisallow: /\n' : ''
+  const robotsTxt = config.robots?.index === false ? 'User-agent: *\nAllow: /\n' : ''
 
   return {
     name: 'figma-site-configuration',
@@ -164,9 +164,6 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
         const tags: HtmlTagDescriptor[] = []
         if (description) {
           tags.push({ tag: 'meta', attrs: { name: 'description', content: description }, injectTo: 'head' })
-        }
-        if (config.robots?.index === false) {
-          tags.push({ tag: 'meta', attrs: { name: 'robots', content: 'noindex, nofollow' }, injectTo: 'head' })
         }
         if (favicon) {
           tags.push({ tag: 'link', attrs: { rel: 'icon', href: favicon }, injectTo: 'head' })
