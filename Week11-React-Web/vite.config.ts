@@ -1,6 +1,7 @@
 import { defineConfig, type HtmlTagDescriptor, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { VitePWA } from 'vite-plugin-pwa'
 import path from 'node:path'
 
 import siteConfiguration from './.figma/make/site.json' with { type: 'json' }
@@ -21,6 +22,36 @@ export default defineConfig(({ mode }) => {
     plugins: [
 react(),
       tailwindcss(),
+      VitePWA({
+    registerType: 'autoUpdate',
+
+    manifest: {
+      name: 'CareConnect Patient Portal',
+      short_name: 'CareConnect',
+      description: 'CareConnect Patient Portal',
+      theme_color: '#ffffff',
+      background_color: '#ffffff',
+      display: 'standalone',
+      start_url: '/',
+      scope: '/',
+      icons: [
+        {
+          src: '/icon-192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: '/icon-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ],
+    },
+
+    workbox: {
+      cleanupOutdatedCaches: true,
+    },
+  }),
       figmaSiteConfiguration(siteConfiguration),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
@@ -98,7 +129,7 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
   const headEnd = config.customScripts?.headEnd ?? ''
   const bodyStart = config.customScripts?.bodyStart ?? ''
   const bodyEnd = config.customScripts?.bodyEnd ?? ''
-  const robotsTxt = config.robots?.index === false ? 'User-agent: *\nDisallow: /\n' : ''
+  const robotsTxt = config.robots?.index === false ? 'User-agent: *\nAllow: /\n' : ''
 
   return {
     name: 'figma-site-configuration',
@@ -133,9 +164,6 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
         const tags: HtmlTagDescriptor[] = []
         if (description) {
           tags.push({ tag: 'meta', attrs: { name: 'description', content: description }, injectTo: 'head' })
-        }
-        if (config.robots?.index === false) {
-          tags.push({ tag: 'meta', attrs: { name: 'robots', content: 'noindex, nofollow' }, injectTo: 'head' })
         }
         if (favicon) {
           tags.push({ tag: 'link', attrs: { rel: 'icon', href: favicon }, injectTo: 'head' })
