@@ -87,3 +87,63 @@ The `BrowserWindow` uses:
 - A restrictive production content security policy
 
 Only development builds expose reload and developer-tools menu items.
+
+## Architecture Diagram
+
+The CareConnect Electron desktop application uses three main processes: Main, Preload, and Renderer. Each process has a different responsibility, and they work together to run the desktop application.
+
+```mermaid
+flowchart TD
+    A["Electron Main Process"]
+    B["Preload Process"]
+    C["React Renderer"]
+    D["Application Screens"]
+    E["Reusable Components"]
+    F["Business Logic"]
+
+    A <-->|IPC Communication| B
+    B <-->|Secure API| C
+    C --> D
+    C --> E
+    C --> F
+```
+
+The **Main Process** controls the desktop window, application menus, and other Electron features.
+
+The **Preload Process** allows the React application to communicate with Electron through a limited and secure API.
+
+The **Renderer Process** displays the CareConnect screens and allows users to interact with the application.
+
+Separating these processes helps us organize the application and limit direct access to Electron features.
+
+## Code Structure
+
+We organized the Electron application into different files and folders to make the code easier to understand, update, and test.
+
+| File or Folder | Purpose |
+|---|---|
+| `electron/main.cjs` | Handles the Electron window, application menus, and desktop settings. |
+| `electron/preload.cjs` | Allows communication between Electron and React. |
+| `src/main.tsx` | Starts the React application. |
+| `src/App.tsx` | Contains the main application component. |
+| `src/screens/` | Contains the different CareConnect screens. |
+| `src/components/` | Contains components that can be reused across screens. |
+| `src/businessLogic.ts` | Contains functions used for application logic. |
+| `src/types.ts` | Defines TypeScript types used in the application. |
+| `src/electron.d.ts` | Defines the Electron API types used by React. |
+| `src/ErrorBoundary.tsx` | Helps handle errors in the React application. |
+| `src/App.test.tsx` | Contains tests for the application. |
+| `src/businessLogic.test.ts` | Contains tests for the business logic. |
+| `src/setupTests.ts` | Sets up the testing environment. |
+
+## Why We Used This Structure
+
+We used this structure to keep the application organized and make it easier to maintain.
+
+Separating the screens and reusable components allows us to make changes without having to update the entire application.
+
+Keeping the business logic in a separate file also makes it easier to test different functions.
+
+We included automated tests to check that the application works as expected. We also used Electron's security settings to limit access between the desktop application and the React interface.
+
+Overall, this structure helped us organize our work and support testing and future improvements.
