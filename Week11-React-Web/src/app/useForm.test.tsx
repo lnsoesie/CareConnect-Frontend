@@ -1,5 +1,6 @@
 import { renderHook, act } from "@testing-library/react"
 import { useForm } from "./useForm"
+import type { FormEvent } from "react"
 
 describe("CareConnect useForm hook", () => {
   test("initializes form fields with default values", () => {
@@ -59,7 +60,7 @@ describe("CareConnect form submission", () => {
     act(() => {
       result.current.handleSubmit(onValid)({
         preventDefault: jest.fn(),
-      } as any)
+      } as unknown as FormEvent<HTMLFormElement>)
     })
 
     expect(result.current.errors.email).toBe(
@@ -77,7 +78,7 @@ describe("CareConnect form submission", () => {
     act(() => {
       result.current.handleSubmit(onValid)({
         preventDefault: jest.fn(),
-      } as any)
+      } as unknown as FormEvent<HTMLFormElement>)
     })
 
     expect(onValid).toHaveBeenCalledWith({
