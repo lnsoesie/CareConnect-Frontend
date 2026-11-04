@@ -342,7 +342,7 @@ function Shell({
                   go(item.route)
                   setMobileMenuOpen(false)
                 }}
-                variant="ghost"
+                variant="ghost" title={item.label}
               >
                 <img src={`${A}/${item.icon}`} alt="" />
                 <span>{item.label}</span>
